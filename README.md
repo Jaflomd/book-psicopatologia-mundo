@@ -2,7 +2,7 @@
 
 Entregable navegable del proyecto `book-psicopatologia-mundo`.
 
-Estado: v0.1 WIP con los capitulos 1 y 2 expandidos como modelo largo.
+Estado: v0.1 WIP con los capitulos 1, 2 y 3 expandidos como modelo largo.
 
 URL publica:
 
@@ -19,8 +19,10 @@ https://jaflomd.github.io/book-psicopatologia-mundo/
    - Mini-historia del diagnostico psiquiatrico, DSM-III, Hacking y giro dimensional.
 2. `Por que el mundo me pide ser alguien todo el tiempo?`
    - Objetivos aprendidos, cultura, etapa vital, amor/valor/pertenencia y demandas renegociables.
+3. `Que habilidades usa mi mente para vivir el dia?`
+   - Competencias humanas, sistemas funcionales, linea base, entrenamiento, compensacion y atrofia.
 
-Los capitulos 3-12 existen como esqueleto navegable y se expandiran en iteraciones posteriores.
+Los capitulos 4-12 existen como esqueleto navegable y se expandiran en iteraciones posteriores.
 
 ## Fuente WIP
 

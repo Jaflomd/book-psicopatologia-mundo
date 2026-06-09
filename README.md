@@ -4,6 +4,10 @@ Entregable navegable del proyecto `book-psicopatologia-mundo`.
 
 Estado: v0.1 WIP con los capitulos 1 y 2 expandidos como modelo largo.
 
+URL publica:
+
+https://jaflomd.github.io/book-psicopatologia-mundo/
+
 ## Archivos
 
 - `index.html` - version navegable principal.

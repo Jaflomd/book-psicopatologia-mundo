@@ -1,0 +1,1722 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Psicopatologia para el mundo - Manuscrito navegable v0.1</title>
+  <style>
+    :root {
+      --paper: #fbfaf7;
+      --surface: #ffffff;
+      --ink: #25231f;
+      --muted: #706b61;
+      --line: #ded8cd;
+      --line-strong: #c9c0b3;
+      --accent: #1e6b68;
+      --accent-soft: #dbecea;
+      --blue: #284f8f;
+      --blue-soft: #e5edf8;
+      --rose: #8b475d;
+      --rose-soft: #f4e5e9;
+      --gold: #8a6424;
+      --gold-soft: #f1ead8;
+      --green: #466f32;
+      --green-soft: #e5eedf;
+      --shadow: 0 18px 48px rgba(44, 39, 31, 0.08);
+      --radius: 8px;
+      --sidebar: 304px;
+      --content: 850px;
+      --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(30, 107, 104, 0.05), transparent 34%),
+        var(--paper);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.62;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .progress {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 20;
+      height: 4px;
+      background: transparent;
+    }
+
+    .progress span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--blue), var(--rose));
+      transition: width 120ms ease;
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: var(--sidebar) minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      border-right: 1px solid var(--line);
+      background: rgba(251, 250, 247, 0.94);
+      backdrop-filter: blur(14px);
+      padding: 22px 18px 28px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 8px;
+      padding: 6px 4px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--accent);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.02rem;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+
+    .tools {
+      display: grid;
+      gap: 10px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .search {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      padding: 8px 10px;
+      outline: none;
+    }
+
+    .search:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(30, 107, 104, 0.14);
+    }
+
+    .tool-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 6px 8px;
+    }
+
+    .icon-btn:hover,
+    .nav a:hover {
+      border-color: var(--line-strong);
+      background: #f4f1eb;
+    }
+
+    .icon-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke-width: 2;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+      padding-top: 16px;
+    }
+
+    .nav-label {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 10px 4px 4px;
+    }
+
+    .nav a {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 9px;
+      align-items: start;
+      min-height: 42px;
+      padding: 8px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      color: var(--ink);
+      font-size: 0.86rem;
+      line-height: 1.25;
+    }
+
+    .nav a.active {
+      border-color: rgba(30, 107, 104, 0.22);
+      background: var(--accent-soft);
+      color: #123f3d;
+    }
+
+    .nav-num {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .mobile-bar {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      border-bottom: 1px solid var(--line);
+      background: rgba(251, 250, 247, 0.96);
+      backdrop-filter: blur(14px);
+      padding: 10px 14px;
+    }
+
+    .mobile-bar button {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      padding: 7px 10px;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .mobile-bar svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .page {
+      max-width: var(--content);
+      margin: 0 auto;
+      padding: 38px 28px 88px;
+    }
+
+    .hero {
+      padding: 58px 0 36px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 28px;
+    }
+
+    .kicker {
+      margin: 0 0 16px;
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero h2 {
+      margin: 0;
+      max-width: 760px;
+      font-family: var(--font-serif);
+      font-size: clamp(2.35rem, 6vw, 4.8rem);
+      line-height: 0.98;
+      letter-spacing: 0;
+      font-weight: 740;
+      overflow-wrap: anywhere;
+    }
+
+    .hero .subtitle {
+      max-width: 720px;
+      margin: 22px 0 0;
+      font-size: clamp(1.08rem, 2vw, 1.28rem);
+      color: #4b463d;
+      line-height: 1.6;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 34px;
+    }
+
+    .lens {
+      min-height: 116px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .lens strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+    }
+
+    .lens span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.38;
+      overflow-wrap: break-word;
+    }
+
+    .notice {
+      margin: 26px 0 0;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--gold);
+      border-radius: var(--radius);
+      background: var(--gold-soft);
+      padding: 14px 16px;
+      color: #473719;
+      font-size: 0.93rem;
+    }
+
+    .section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section h2,
+    .chapter h2,
+    .chapter h3 {
+      letter-spacing: 0;
+    }
+
+    .section h2 {
+      margin: 0 0 12px;
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      line-height: 1.12;
+    }
+
+    .section > p {
+      max-width: 720px;
+      color: #4f493f;
+      margin: 0 0 14px;
+    }
+
+    .map-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .map-table th,
+    .map-table td {
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    .map-table th {
+      background: #f2efe8;
+      color: #514b41;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .map-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .map-table td:first-child {
+      width: 54px;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .chapter {
+      padding: 54px 0 42px;
+      border-bottom: 1px solid var(--line);
+      scroll-margin-top: 20px;
+    }
+
+    .chapter.hidden {
+      display: none;
+    }
+
+    .chapter-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 22px;
+    }
+
+    .chapter-num {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--line-strong);
+      background: var(--surface);
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .chapter h2 {
+      margin: 10px 0 10px;
+      font-family: var(--font-serif);
+      font-size: clamp(1.95rem, 4vw, 3.08rem);
+      line-height: 1.05;
+      font-weight: 740;
+    }
+
+    .thesis {
+      margin: 0;
+      max-width: 720px;
+      color: #514b41;
+      font-size: 1.06rem;
+      line-height: 1.58;
+    }
+
+    .chapter-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: end;
+    }
+
+    .mini-btn {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .mini-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .mini-btn svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .bodycopy {
+      font-family: var(--font-serif);
+      font-size: 1.12rem;
+      line-height: 1.78;
+    }
+
+    .bodycopy p {
+      margin: 0 0 18px;
+    }
+
+    .bodycopy strong {
+      font-family: var(--font-sans);
+      font-size: 0.96em;
+    }
+
+    .bodycopy h3 {
+      margin: 34px 0 12px;
+      font-family: var(--font-sans);
+      font-size: 0.96rem;
+      line-height: 1.25;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--accent);
+    }
+
+    .callout {
+      margin: 26px 0;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .callout.rose {
+      border-left: 4px solid var(--rose);
+      background: var(--rose-soft);
+    }
+
+    .callout.blue {
+      border-left: 4px solid var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .callout.green {
+      border-left: 4px solid var(--green);
+      background: var(--green-soft);
+    }
+
+    .callout h3,
+    .practice h3 {
+      margin: 0 0 9px;
+      font-size: 0.88rem;
+      font-family: var(--font-sans);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #514b41;
+    }
+
+    .callout p,
+    .practice p {
+      margin: 0 0 10px;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .callout p:last-child,
+    .practice p:last-child {
+      margin-bottom: 0;
+    }
+
+    .practice {
+      margin: 26px 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #f8f5ee;
+      padding: 18px 20px;
+    }
+
+    .practice ol,
+    .practice ul,
+    .science ul,
+    .footer-list {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .practice li,
+    .science li,
+    .footer-list li {
+      margin: 6px 0;
+    }
+
+    details.science {
+      margin-top: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.62);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    details.science summary {
+      min-height: 46px;
+      padding: 12px 14px;
+      cursor: pointer;
+      color: #514b41;
+      font-weight: 800;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    details.science summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.science summary::before {
+      content: "+";
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid var(--line-strong);
+      color: var(--accent);
+      background: var(--surface);
+      font-weight: 900;
+    }
+
+    details.science[open] summary::before {
+      content: "-";
+    }
+
+    .science-body {
+      padding: 0 18px 16px 45px;
+      color: #514b41;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .science-body p {
+      margin: 0 0 10px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 12px 0 0;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      line-height: 1.2;
+    }
+
+    .worksheet {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .field {
+      min-height: 116px;
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 14px;
+    }
+
+    .field strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 0.84rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .field span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .book-footer {
+      padding: 42px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .drawer-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 24;
+      background: rgba(37, 35, 31, 0.28);
+    }
+
+    .no-results {
+      display: none;
+      margin: 20px 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 16px;
+      color: var(--muted);
+    }
+
+    .no-results.visible {
+      display: block;
+    }
+
+    @media (max-width: 1080px) {
+      :root {
+        --sidebar: 278px;
+      }
+
+      .hero-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 820px) {
+      .layout {
+        display: block;
+      }
+
+      .mobile-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: min(84vw, 326px);
+        z-index: 25;
+        transform: translateX(-104%);
+        transition: transform 180ms ease;
+        box-shadow: var(--shadow);
+      }
+
+      body.drawer-open .sidebar {
+        transform: translateX(0);
+      }
+
+      body.drawer-open .drawer-backdrop {
+        display: block;
+      }
+
+      .page {
+        width: 100%;
+        max-width: 100vw;
+        padding: 22px 18px 68px;
+        overflow-x: hidden;
+      }
+
+      .hero {
+        padding-top: 34px;
+      }
+
+      .hero h2 {
+        font-size: clamp(2.05rem, 10vw, 2.7rem);
+        line-height: 1.04;
+      }
+
+      .hero .subtitle {
+        font-size: 1rem;
+      }
+
+      .hero-grid,
+      .worksheet {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-grid > *,
+      .worksheet > *,
+      .notice,
+      .callout,
+      .practice,
+      details.science {
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      .chapter-header {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-actions {
+        justify-content: start;
+      }
+
+      .map-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+
+    @media print {
+      .sidebar,
+      .mobile-bar,
+      .progress,
+      .chapter-actions,
+      .drawer-backdrop,
+      .tools {
+        display: none !important;
+      }
+
+      .layout {
+        display: block;
+      }
+
+      .page {
+        max-width: none;
+        padding: 0;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      .chapter {
+        break-before: page;
+      }
+
+      details.science {
+        break-inside: avoid;
+      }
+
+      details.science:not([open]) .science-body {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Navegacion del libro">
+      <div class="brand">
+        <div class="brand-mark">P</div>
+        <div>
+          <h1>Psicopatologia para el mundo</h1>
+          <p>Manuscrito navegable v0.1 para lector publico.</p>
+        </div>
+      </div>
+      <div class="tools" aria-label="Herramientas de lectura">
+        <input class="search" id="searchInput" type="search" placeholder="Buscar en capitulos" aria-label="Buscar en capitulos">
+        <div class="tool-row">
+          <button class="icon-btn" id="expandAll" title="Abrir todas las notas tecnicas" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Ciencia
+          </button>
+          <button class="icon-btn" id="printBook" title="Imprimir o guardar PDF" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+            PDF
+          </button>
+        </div>
+      </div>
+      <nav class="nav" id="nav">
+        <div class="nav-label">Entrada</div>
+        <a href="#portada"><span class="nav-num">0</span><span>Portada y mapa de lectura</span></a>
+        <div class="nav-label">Capitulos</div>
+        <a href="#capitulo-01"><span class="nav-num">1</span><span>&iquest;Es normal sentir que no encajo en mi diagnostico?</span></a>
+        <a href="#capitulo-02"><span class="nav-num">2</span><span>&iquest;Por que el mundo me pide ser alguien todo el tiempo?</span></a>
+        <a href="#capitulo-03"><span class="nav-num">3</span><span>&iquest;Que habilidades usa mi mente para vivir el dia?</span></a>
+        <a href="#capitulo-04"><span class="nav-num">4</span><span>&iquest;Por que a mi me pesa mas que a otros?</span></a>
+        <a href="#capitulo-05"><span class="nav-num">5</span><span>&iquest;Por que un problema pequeno se vuelve un bucle?</span></a>
+        <a href="#capitulo-06"><span class="nav-num">6</span><span>&iquest;Por que a veces si puedo, me quedo en lo mismo?</span></a>
+        <a href="#capitulo-07"><span class="nav-num">7</span><span>&iquest;Como puedo entrenar una habilidad sin culparme?</span></a>
+        <a href="#capitulo-08"><span class="nav-num">8</span><span>&iquest;Para que sirve ir a terapia?</span></a>
+        <a href="#capitulo-09"><span class="nav-num">9</span><span>&iquest;Cuando ayudan los medicamentos?</span></a>
+        <a href="#capitulo-10"><span class="nav-num">10</span><span>&iquest;Que otras cosas tambien cambian mi mente?</span></a>
+        <a href="#capitulo-11"><span class="nav-num">11</span><span>&iquest;Como se cuando necesito pedir ayuda ya?</span></a>
+        <a href="#capitulo-12"><span class="nav-num">12</span><span>&iquest;Como uso este mapa en mi vida real?</span></a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="mobile-bar">
+        <button id="openDrawer" type="button" aria-label="Abrir indice">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          Indice
+        </button>
+        <span>v0.1</span>
+      </div>
+
+      <div class="page">
+        <header class="hero" id="portada">
+          <p class="kicker">Borrador de taller | public reader</p>
+          <h2>Psicopatologia para el mundo</h2>
+          <p class="subtitle">
+            Un mapa para entender lo que el mundo te pide, la historia que cargas,
+            las competencias que puedes construir y la puerta que necesitas abrir
+            para usar lo que sabes cuando importa.
+          </p>
+          <div class="hero-grid" aria-label="Los cuatro lentes del libro">
+            <div class="lens">
+              <strong>Mundo</strong>
+              <span>Demandas de exito, productividad, deseabilidad, normalidad, amor y pertenencia.</span>
+            </div>
+            <div class="lens">
+              <strong>Historia</strong>
+              <span>Lo que aprendiste a esperar, lo que ya venias cargando y el peso que eso agrega.</span>
+            </div>
+            <div class="lens">
+              <strong>Competencias</strong>
+              <span>Habilidades entrenables para amenaza, recompensa, cognicion, vinculo, cuerpo y regulacion.</span>
+            </div>
+            <div class="lens">
+              <strong>Metacontrol</strong>
+              <span>La puerta que permite cambiar de modo, actualizar metas y no obedecer el primer impulso.</span>
+            </div>
+          </div>
+          <div class="notice">
+            Este archivo es un borrador navegable v0.1. Educa y ordena ideas, pero no diagnostica,
+            no reemplaza terapia, no reemplaza evaluacion medica y requiere revision clinica fina
+            en los capitulos de medicacion y ayuda urgente.
+          </div>
+        </header>
+
+        <section class="section" id="mapa">
+          <h2>Como se lee este libro</h2>
+          <p>
+            No tienes que leerlo como manual. Puedes entrar por la pregunta que mas te duela.
+            Cada capitulo trae una idea central, una escena espejo, un mecanismo, una palanca
+            pequena y una nota tecnica plegable para quien quiera mirar debajo del capot.
+          </p>
+          <table class="map-table" aria-label="Mapa de capitulos">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Pregunta</th>
+                <th>Idea en una frase</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Diagnostico</td><td>Una etiqueta puede ayudar, pero no dibuja toda la casa.</td></tr>
+              <tr><td>2</td><td>Demandas</td><td>La cultura no solo exige; tambien instala metas dentro de ti.</td></tr>
+              <tr><td>3</td><td>Competencias</td><td>Tu mente no falla como una sola pieza; se saturan sistemas.</td></tr>
+              <tr><td>4</td><td>Historia</td><td>La misma bolsa pesa distinto si ya venias cargando otra mochila.</td></tr>
+              <tr><td>5</td><td>Bucles</td><td>Un sintoma puede ser la primera ficha, no toda la historia.</td></tr>
+              <tr><td>6</td><td>Metacontrol</td><td>Darse cuenta prende la luz; metacontrol te permite moverte.</td></tr>
+              <tr><td>7</td><td>Cambio</td><td>Entrenar no es culparte; es crear condiciones para responder mejor.</td></tr>
+              <tr><td>8</td><td>Terapia</td><td>La terapia prepara; la vida consolida.</td></tr>
+              <tr><td>9</td><td>Medicacion</td><td>Puede bajar ruido y devolver margen; no vive por ti.</td></tr>
+              <tr><td>10</td><td>Condiciones</td><td>Sueno, cuerpo, ambiente y red no son consejos sueltos.</td></tr>
+              <tr><td>11</td><td>Ayuda urgente</td><td>Si hay humo, primero seguridad; despues mapa.</td></tr>
+              <tr><td>12</td><td>Mapa final</td><td>La salud mental es una relacion viva que puedes aprender a mover.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <div class="no-results" id="noResults">No encontre capitulos con esa busqueda. Prueba con "diagnostico", "metacontrol", "terapia", "medicacion" o "ayuda".</div>
+
+        <article class="chapter" id="capitulo-01" data-search="diagnostico etiqueta realidad historia mundo competencias">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">1</span>
+              <h2>&iquest;Es normal sentir que no encajo en mi diagnostico?</h2>
+              <p class="thesis">Tu diagnostico puede nombrar una parte del problema. No puede explicar toda la relacion entre tu vida, tu historia y lo que el mundo te esta pidiendo.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-01">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-01">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>Puede aliviar que alguien nombre lo que te pasa.</p>
+            <p>A veces una palabra llega despues de anos de ruido. Ansiedad. Depresion. TDAH. Autismo. Bipolaridad. Trauma. Duelo. Estr&eacute;s. La palabra no arregla todo, pero puede hacer algo importante: poner borde donde antes habia niebla.</p>
+            <p>De pronto puedes explicar que no eras simplemente flojo, dramatico, raro, malcriado, intenso o debil. Puedes pedir ayuda con mas precision. Puedes buscar tratamiento. Puedes leer a otras personas y sentir que no eres el unico. Puedes mirar hacia atras y decir: "ah, entonces esto tenia una forma".</p>
+            <p>Eso importa.</p>
+
+            <h3>Cuando una palabra por fin ordena el ruido</h3>
+            <p>No vamos a empezar este libro insultando los diagnosticos. Seria facil, y tambien seria pobre. Los diagnosticos sirven. Sirven para comunicar. Sirven para investigar. Sirven para ordenar decisiones clinicas. Sirven para abrir puertas en sistemas que, sin una palabra oficial, muchas veces no escuchan.</p>
+            <p>Un diagnostico puede protegerte de una lectura cruel. Puede decirle a tu familia, a tu escuela, a tu trabajo o incluso a ti mismo: esto no es flojera pura, no es mala intencion, no es simplemente falta de caracter. Hay un patron. Hay algo que merece ser mirado con metodo.</p>
+            <p>Pero una puerta no es una casa.</p>
+            <p>El problema empieza cuando la palabra que debia ayudarte a entrar se convierte en la unica forma de mirarte. Cuando dejas de decir "tengo ansiedad" y empiezas a vivir como si toda tu vida fuera explicada por ansiedad. Cuando dices "soy TDAH" y esa frase te da alivio, pero tambien empieza a comerse tu autonomia. Cuando una etiqueta ayuda a otros a entenderte, pero deja afuera lo que realmente te esta pidiendo la vida.</p>
+            <p>Una etiqueta puede explicar por que te cuesta iniciar una tarea. No explica por que esa tarea se siente como examen de valor personal. Puede nombrar una tendencia a la alarma. No explica por que justo ese mensaje, de justo esa persona, en justo esta etapa de tu vida, te desarma. Puede describir un patron de animo. No explica por si sola el duelo, la deuda, el cansancio, la pantalla, el cuerpo, la familia, el trabajo, la soledad o la necesidad de que alguien te mire con ternura.</p>
+            <p>El diagnostico nombra algo. No nombra todo.</p>
+
+            <h3>Las categorias no caen del cielo</h3>
+            <p>Un diagnostico psiquiatrico no cae del cielo. Tiene historia. Alguien tuvo que decidir que sintomas cuentan, cuanto tiempo deben durar, que queda dentro y que queda fuera. Eso no lo vuelve falso. Lo vuelve una herramienta humana.</p>
+            <p>Antes del DSM-III, la psiquiatria tenia un problema real de idioma. Habia sufrimientos descritos con nombres amplios, escuelas distintas y lenguajes clinicos que no siempre hablaban entre si. Dos profesionales podian mirar a una misma persona y llegar a nombres distintos.</p>
+            <p>El DSM-III, publicado en 1980, intento responder a esa crisis. Su apuesta fue crear criterios mas claros: ciertos sintomas, durante cierto tiempo, con cierto deterioro, permitian decir "estamos hablando de algo parecido". Eso hizo mas facil investigar, ensenar, comunicar y pedir ayuda.</p>
+            <p>DSM-III resolvio parte del problema del idioma. No resolvio el problema de la vida.</p>
+            <p>Porque una categoria puede aumentar la confiabilidad entre observadores, pero eso no significa que explique la experiencia completa de quien vive dentro de esa categoria. Puede ayudar a que dos clinicos se entiendan. No necesariamente ayuda a que una persona entienda por que se derrumba justo en una reunion, por que se queda despierta despues de un mensaje o por que una demanda pequena le pesa como sentencia.</p>
+
+            <h3>Lo que una caja permite y lo que una caja borra</h3>
+            <p>Las categorias sirven porque el mundo necesita coordinar. Un hospital necesita decidir. Un investigador necesita agrupar. Un medico necesita comunicar. Una escuela puede necesitar entender que no esta frente a simple "mala conducta". Una persona puede necesitar una palabra para dejar de insultarse.</p>
+            <p>Ese es el lado util de la caja.</p>
+            <p>Pero la caja tambien cobra. Aparecen umbrales: un punto mas y "tienes"; un punto menos y "no tienes". Aparecen comorbilidades: varias cajas encima de una misma vida. Aparecen personas muy distintas con el mismo nombre diagnostico. Aparece el riesgo de mirar solo lo que la caja permite ver y dejar afuera el contexto donde el sufrimiento se prende.</p>
+            <p>Por eso no basta preguntar si alguien entra o no entra en una categoria. Tambien hay que preguntar cuanto pesa el sintoma, en que situacion aparece, que sistema se satura, que historia lo vuelve mas intenso, que recursos existen y que puerta se cierra bajo presion.</p>
+            <p>La categoria coordina. El mapa explica mejor.</p>
+
+            <h3>Cuando el nombre tambien te cambia</h3>
+            <p>Ian Hacking, un filosofo de la ciencia, tuvo una intuicion util para este tema: algunas categorias humanas no solo describen a las personas; tambien cambian como las personas se entienden y como el mundo las trata. Cuando una persona recibe un nombre, ese nombre puede volver hacia ella. Puede darle alivio, comunidad y lenguaje. Tambien puede darle guion.</p>
+            <p>Ese es el bucle: el nombre describe a la persona, la persona responde al nombre, el entorno responde a la persona nombrada, y la categoria empieza a vivir dentro de la cultura.</p>
+            <p>Por eso hay que tratar los diagnosticos con respeto. No son simples etiquetas pegadas por fuera. Pueden entrar en la identidad. Pueden organizar esperanza. Pueden abrir tratamiento. Pueden cerrar futuro si se usan mal.</p>
+
+            <h3>Por que ahora miramos dimensiones</h3>
+            <p>Hoy la psiquiatria intenta, lentamente, mirar mas alla de la logica puro "tienes o no tienes". La CIE-11 ya muestra algunos movimientos importantes, por ejemplo en la forma mas dimensional de pensar la personalidad. En investigacion, modelos como RDoC y HiTOP empujan a mirar sistemas, dimensiones, intensidad y continuidad. El DSM-5-TR sigue siendo el DSM vigente; lo que venga despues tendra que seguir negociando esta tension entre categorias utiles y mapas mas finos.</p>
+            <p>La pregunta dimensional no dice solo: "estas dentro o fuera?". Pregunta: cuanto, en que sistema, bajo que demanda, con que historia, en que etapa de la vida, con que competencias y con que capacidad de cambiar de modo.</p>
+            <p>Eso no elimina las categorias. Las pone en su lugar.</p>
+            <p>Una categoria puede darte una coordenada. Pero si quieres moverte, necesitas mapa. Necesitas saber donde esta el terreno, que camino esta bloqueado, que recurso falta y que puerta no abre cuando mas la necesitas.</p>
+
+            <h3>El mapa grande de este libro</h3>
+            <p>Imagina a Kai. Tiene dieciseis anos y por fin escucha una palabra que parece explicar una parte de su vida. Al inicio respira. Tal vez no era simplemente "el dificil". Tal vez no era solo "el que no se concentra", "el que contesta", "el que no hace caso". Esa palabra puede protegerlo de una lectura cruel.</p>
+            <p>Pero despues aparece otra incomodidad. Si esa palabra lo explica todo, &iquest;donde queda su autonomia? &iquest;Donde queda su rabia? &iquest;Donde queda lo que la escuela le pide, lo que su familia espera, lo que la pantalla premia y lo que el mismo no sabe pedir?</p>
+            <p>Algo parecido puede pasarle a Ruth. Por fuera funciona. Decide, responde, produce, sostiene. Una etiqueta puede nombrar su agotamiento, pero no explica por si sola la demanda de no fallar, la historia de haber sido querida cuando rendia ni el cuerpo que aprendio a dormir con un ojo abierto.</p>
+            <p>Maria puede temer lo contrario. Puede escuchar un diagnostico para su hijo y sentir que lo estan cerrando en una caja: que el nino deja de ser nino y se vuelve expediente.</p>
+            <p>Steven, atravesando una perdida, puede sentir que ninguna palabra alcanza. Tal vez alguien le dice depresion, duelo complicado, adaptacion, crisis. Puede haber utilidad en esos nombres. Pero una palabra no contiene la forma exacta en que una casa se queda vacia.</p>
+            <p>Por eso este libro no empieza preguntando solo "que tienes?".</p>
+            <p>Esa pregunta puede ser necesaria. A veces es urgente. A veces salva tiempo. A veces orienta tratamiento. Pero si se queda sola, queda chica.</p>
+            <p>La pregunta mas completa es otra: &iquest;que te esta pidiendo la vida, que historia se activa cuando esa demanda aparece, que competencias tienes disponibles y que puerta se cierra cuando sube la presion?</p>
+            <p>Ahi empieza el mapa.</p>
+            <p>Primero esta el mundo. No como villano total, sino como campo de demandas. El mundo te pide rendir, gustar, responder, adaptarte, decidir, estar disponible, regularte, mostrarte, callarte, cuidar, ganar, no molestar, no caer. Algunas demandas son justas. Otras son brutales. Muchas se vuelven invisibles porque ya aprendiste a llamarlas "vida normal".</p>
+            <p>Despues esta tu historia. No como sentencia, sino como peso. La misma demanda no cae igual sobre todos. Una critica no pesa igual si creciste bajo critica. Una demora no pesa igual si aprendiste abandono. Un error no pesa igual si cada error fue usado para definir tu valor. No todos empezamos con la misma mochila.</p>
+            <p>Luego estan tus competencias. Competencia no significa virtud ni talento. Significa habilidad entrenable para responder a una demanda real. Concentrarte. Pedir ayuda. Tolerar verguenza. Regular el cuerpo. Dormir. Planificar. Decir no. Acercarte sin desesperarte. Alejarte sin destruir. No todo se entrena igual, pero mucho se puede desarrollar, compensar o sostener mejor.</p>
+            <p>Y finalmente esta el metacontrol. La puerta. Esa capacidad de cambiar de modo cuando conviene, de actualizar una meta, de no quedar pegado a una estrategia vieja ni escapar por panico. A veces sabes que hacer, pero no puedes entrar a la habilidad cuando mas la necesitas. A veces no falta conocimiento. Falta acceso.</p>
+            <p>Ese mapa no reemplaza el diagnostico. Lo ubica.</p>
+            <p>Un diagnostico puede decir: "hay un patron aqui". El mapa pregunta: "como vive ese patron dentro de esta persona, en este mundo, con esta historia, con estas competencias, en este momento de su vida?".</p>
+
+            <h3>Dos columnas antes de seguir</h3>
+            <p>Hay otra razon para mirar asi: el diagnostico suele ser estable en el papel, pero tu vida no es estable. Cambia el trabajo, el cuerpo, la edad, la energia, la red, la verguenza, lo que toleras y lo que deseas.</p>
+            <p>Una misma persona puede funcionar bien en una etapa y desbordarse en otra. No porque se haya vuelto otra persona, sino porque la relacion cambio: la demanda subio, la carga aumento, una competencia quedo corta o una puerta se atasco con cansancio, duelo, miedo o presion.</p>
+            <p>Esto explica algo que mucha gente vive con culpa: "antes podia". No siempre significa que retrocediste. A veces significa que estas intentando usar competencias de una vida anterior para una vida que ya cambio.</p>
+            <p>Por eso el mapa tiene que ser dinamico. No pregunta solo quien eres. Pregunta donde estas. No pregunta solo que diagnostico aparece. Pregunta que relacion se armo entre tu mundo actual, tu historia activa, tus competencias disponibles y tu metacontrol bajo presion.</p>
+            <p>Ese sera el lenguaje del libro.</p>
+            <p>No para negar lo clinico. Al contrario: para hacerlo mas humano, mas preciso y mas usable. Un diagnostico puede ser una herramienta. El problema es pedirle que sea destino, biografia, excusa, condena y plan de vida al mismo tiempo. Ninguna palabra aguanta tanto.</p>
+            <p>Antes de avanzar, conviene hacer una pausa pequena.</p>
+            <p>Piensa en la palabra que mas usas para explicarte. Puede ser un diagnostico formal, una sospecha, una etiqueta que otros te pusieron o una frase tuya: "soy ansioso", "soy intenso", "soy inestable", "soy evitativo", "soy desordenado", "soy demasiado sensible", "soy frio", "soy un desastre".</p>
+            <p>No la tires. No la adores.</p>
+            <p>Ponla sobre la mesa y preguntale dos cosas: &iquest;que parte de mi vida si explica? &iquest;Que parte de mi vida todavia no explica?</p>
+            <p>Ahi empieza una relacion mas adulta con tu diagnostico. No lo niegas. No te arrodillas ante el. Lo usas como una pieza del mapa.</p>
+            <p>Y cuando una pieza ya no alcanza, no significa que estabas equivocado. Significa que estas listo para mirar mas grande.</p>
+          </div>
+          <div class="callout blue">
+            <h3>Frase para llevar</h3>
+            <p>Tu diagnostico puede darte una coordenada. Este libro quiere darte el mapa.</p>
+          </div>
+          <div class="practice">
+            <h3>Palanca pequena</h3>
+            <p>Haz dos columnas:</p>
+            <ol>
+              <li>Lo que mi etiqueta si explica.</li>
+              <li>Lo que mi etiqueta todavia no explica.</li>
+            </ol>
+            <p>Si no tienes diagnostico, cambia "etiqueta" por "la palabra que suelo usar para explicarme".</p>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>El DSM-III nacio en un contexto de busqueda de mayor confiabilidad: criterios explicitos, evaluacion multiaxial y un enfoque mas descriptivo. Hacking ayuda a pensar el efecto bucle de las categorias humanas. CIE-11, HiTOP y RDoC muestran el giro actual hacia utilidad clinica, sistemas y dimensiones.</p>
+              <ul>
+                <li>APA, historia del DSM y desarrollo del DSM-III.</li>
+                <li>Ian Hacking, looping effects of human kinds.</li>
+                <li>Kotov et al., HiTOP dimensional alternative.</li>
+                <li>WHO, ICD-11 CDDR; Insel et al. y Cuthbert &amp; Insel, RDoC.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">DSM-III</span><span class="tag">Hacking</span><span class="tag">HiTOP</span><span class="tag">RDoC</span><span class="tag">ICD-11</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-02" data-search="mundo cultura exito productividad deseabilidad normalidad amor valor soledad objetivos metas aprendizaje condicionamiento etapa vida pertenencia">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">2</span>
+              <h2>&iquest;Por que el mundo me pide ser alguien todo el tiempo?</h2>
+              <p class="thesis">La cultura no solo te pide rendir, verte bien o encajar. Muchas veces te convence de que, si no lo haces, vas a valer menos o te vas a quedar solo.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-02"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-02"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <h3>Que tan duro lo quieres?</h3>
+            <p>Te puede sonar a gimnasio, a emprendimiento, a examen, a romance, a video corto antes de dormir. Que tan duro lo quieres. Que tanto estas dispuesto a sacrificar. Que tanto vas a aguantar antes de rendirte.</p>
+            <p>A primera vista parece una pregunta sobre motivacion. A veces lo es. Hay metas que necesitan esfuerzo, paciencia, disciplina, repeticion. Nadie construye una vida solo con ganas suaves. Querer algo tambien puede ser una forma hermosa de orientarse.</p>
+            <p>Pero esa frase tiene una segunda capa. No solo pregunta cuanto deseas algo. Tambien pregunta cuanto estas dispuesto a perder para demostrar que lo deseas: sueno, calma, cuerpo, ternura, amigos, tiempo, espontaneidad, salud, dignidad.</p>
+            <p>Y ahi la pregunta cambia.</p>
+            <p>No es lo mismo querer estudiar medicina porque te importa cuidar, que estudiar como si cada nota decidiera si mereces existir. No es lo mismo querer verte bien porque disfrutas tu cuerpo, que vivir tu cuerpo como una deuda. No es lo mismo querer una pareja, que sentir que estar solo prueba que algo en ti fracaso.</p>
+            <p>El mundo no solo te pide hacer cosas. Te pide convertirte en alguien.</p>
+            <p>Ser exitoso. Ser productivo. Ser deseable. Ser normal. Ser fuerte. Ser interesante. Ser tranquilo. Ser intenso, pero no demasiado. Ser independiente, pero disponible. Cuidar, pero no agotarte. Brillar, pero no incomodar.</p>
+            <p>Algunas de esas metas pueden ser tuyas. Algunas pueden ser buenas para ti. El problema empieza cuando una demanda se disfraza de condicion de amor.</p>
+
+            <h3>No vivimos sin objetivos</h3>
+            <p>No vivimos sin objetivos. Incluso descansar puede ser un objetivo. Incluso no discutir puede ser un objetivo. Incluso desaparecer un rato, no responder, no fallar, no decepcionar o no necesitar a nadie puede ser un objetivo.</p>
+            <p>Un objetivo no siempre se ve como una meta escrita en una libreta. A veces es una direccion interna. Algo que tu mente intenta lograr, proteger, evitar o no perder.</p>
+            <p>Por eso no podemos entenderte solo preguntando que diagnostico tienes. Tampoco basta preguntar que sintoma aparece. Hay que preguntar: que estas intentando conseguir? Que estas intentando conservar? Que estas evitando perder? Que version de ti sientes que debes sostener para seguir teniendo lugar?</p>
+            <p>Ruth no solo quiere trabajar bien. En algun punto aprendio que descansar podia leerse como perder valor. Su objetivo visible es rendir. Su objetivo escondido es no sentirse reemplazable.</p>
+            <p>Kai no solo quiere autonomia. Quiere no tener que vender una version aceptable de si mismo para conservar pertenencia. Su objetivo visible es desafiar. Su objetivo escondido es no traicionarse.</p>
+            <p>Maria no solo quiere criar bien. A veces siente que cualquier error de su hijo sera leido como prueba contra ella. Su objetivo visible es cuidar. Su objetivo escondido es no fallar como madre.</p>
+            <p>Steven no solo quiere recuperarse de una perdida. Siente que tardar demasiado en estar bien lo vuelve menos digno. Su objetivo visible es recomponerse. Su objetivo escondido es no sentirse derrotado.</p>
+            <p>El punto no es diagnosticar a Ruth, Kai, Maria o Steven. El punto es ver algo que tambien puede pasar dentro de ti: una meta puede sonar razonable por fuera y estar sosteniendo una amenaza por dentro.</p>
+
+            <h3>De donde salen tus objetivos?</h3>
+            <p>No todo lo que deseas lo elegiste desde cero.</p>
+            <p>Aprendemos a querer. Aprendemos con premios, castigos, imitacion, comparacion y repeticion. Aprendemos que ciertas cosas abren puertas y otras cierran caras. Aprendemos que algunas emociones reciben abrazo y otras reciben burla. Aprendemos que sacar buenas notas trae mirada, que fallar trae silencio, que ser fuerte evita preguntas, que ser deseable da ventaja, que obedecer conserva paz.</p>
+            <p>Luego esas reglas entran. Ya no hace falta que alguien te lo diga. Tu mente lo dice sola.</p>
+            <p>Si descanso, me atraso. Si digo que no, me abandonan. Si engordo, pierdo valor. Si no produzco, soy flojo. Si no respondo rapido, soy malo. Si necesito ayuda, soy debil. Si no tengo una vida impresionante, estoy perdiendo.</p>
+            <p>Eso no significa que todo objetivo sea impuesto. Seria falso y torpe decir eso. Hay deseos propios. Hay vocaciones reales. Hay ambiciones que te levantan. Hay metas que ordenan la vida y la vuelven mas amplia.</p>
+            <p>La pregunta es otra: que parte de esto nacio de ti, que parte fue entrenada por el mundo, y que parte se volvio obligatoria porque parecia proteger amor, valor o pertenencia?</p>
+            <p>Buda ayuda como lente, no como adorno espiritual. Una cosa es querer; otra es esa sed que promete: cuando tenga esto, por fin estare completo. Krishnamurti ayuda desde otro lado: si no miramos el condicionamiento, podemos pasar de una obediencia a otra creyendo que somos libres.</p>
+            <p>Este capitulo no te pide dejar de querer. Te pide mirar el origen de lo que quieres.</p>
+
+            <h3>Lo normal tambien cambia de epoca</h3>
+            <p>Lo normal no siempre es natural. A veces es lo que una epoca repitio tantas veces que dejo de parecer una orden.</p>
+            <p>Antes no se esperaba la misma disponibilidad. No existia la misma vitrina del cuerpo. No todo el mundo tenia que construir marca personal, responder mensajes todo el dia, demostrar productividad, parecer emocionalmente regulado, tener proposito, cuidar su salud mental, verse bien, ser interesante y estar actualizandose siempre.</p>
+            <p>En algunos ambientes, lo minimo ahora parece enorme. Dos grados. Tres idiomas. Buen cuerpo. Red social presentable. Pareja sana. Rutina de ejercicio. Terapia. Emprendimiento. Tiempo para la familia. Buen humor. Cero crisis. Y, por favor, que parezca facil.</p>
+            <p>Byung-Chul Han nombra una imagen util para esto: una cultura donde el mandato ya no siempre viene como prohibicion externa, sino como exigencia interna de rendimiento. No hace falta convertirlo en explicacion total. Basta ver la escena: muchas personas no sienten que alguien las persigue. Sienten que se persiguen solas.</p>
+            <p>La cultura muestra. El grupo valida. La recompensa premia. La comparacion presiona. Y un dia el objetivo ya vive dentro.</p>
+            <p>Por eso no basta decir "yo quiero esto". Claro que lo quieres. Pero tambien importa preguntar quien te enseno que eso era valioso, que costo trae, y que pasa en tu cuerpo cuando imaginas no lograrlo.</p>
+            <p>Lo normal tambien envejece. Lo que una generacion llamo suficiente, otra puede llamarlo mediocre. Lo que una familia llama exito, otra lo llama egoismo. Lo que un grupo llama libertad, otro lo llama fracaso. Y tu mente queda intentando vivir en medio de relojes que no siempre marcan la misma hora.</p>
+
+            <h3>Objetivos que chocan con tu etapa de vida</h3>
+            <p>No quieres lo mismo a los 16, a los 30, a los 40 o despues de una perdida. Tampoco necesitas las mismas competencias.</p>
+            <p>A los 16, Kai puede estar peleando por identidad. Quiere autonomia, pero todavia depende de adultos, escuela, reglas, mirada de pares y un cerebro que sigue aprendiendo a frenar, planear y elegir. Si el mundo le pide obediencia perfecta justo cuando su tarea interna es separarse un poco, el choque puede parecer rebeldia pura. A veces tambien es una demanda mal leida.</p>
+            <p>A los 30 o 40, Ruth puede estar en otro reloj. Carrera, dinero, pareja, fertilidad, independencia, reputacion, cuerpo, liderazgo, futuro. Muchas demandas llegan juntas. Y cuando todas llegan juntas, no se suman solamente: se pelean. Puedes querer crecer profesionalmente y querer descansar. Puedes querer intimidad y querer control. Puedes querer libertad y querer aprobacion.</p>
+            <p>Maria vive otra tension. Cuidar a un hijo, sostener una casa, no repetir danos, trabajar, acompanar, poner limites, no ser dura, no ser permisiva. La cultura de la crianza impecable puede convertir el amor en vigilancia. Entonces la madre que quiere cuidar empieza a controlar porque su sistema de amenaza siente que cualquier error sera irreversible.</p>
+            <p>Steven atraviesa un reloj distinto. Despues de una separacion, una muerte, una enfermedad o un fracaso publico, la cultura a veces exige duelo rapido. Reinvencion elegante. Fortaleza limpia. "Ya pasa pagina". Pero hay etapas en que el objetivo mas sano no es brillar. Es sostenerse sin mentirse.</p>
+            <p>Cada etapa trae objetivos y conflictos distintos. Si no miras la etapa, puedes culparte por no cumplir una meta que ni siquiera corresponde a la vida que estas viviendo.</p>
+
+            <h3>Elegir una demanda sin obedecerla ciegamente</h3>
+            <p>La salida no es no querer nada.</p>
+            <p>No querer nada tambien puede ser una defensa. Puede ser cansancio, depresion, miedo a fallar, proteccion contra la verguenza o una forma de no volver a necesitar. Una vida sin direccion no es automaticamente una vida libre.</p>
+            <p>La salida es mas fina: distinguir.</p>
+            <p>Hay objetivos elegidos. Hay objetivos aprendidos. Hay objetivos prestados. Hay objetivos que empezaron como deseo y terminaron como carcel. Hay objetivos que hoy son utiles, pero manana van a necesitar otra forma. Hay demandas que conviene aceptar por una temporada, otras que conviene negociar, y algunas que conviene soltar porque te estan cobrando demasiado.</p>
+            <p>Metacontrol, aunque todavia no necesitemos llamarlo asi, empieza aqui: poder mirar una meta antes de obedecerla. Poder notar si viene de amor o de panico. Poder cambiar de estrategia cuando la vida cambia. Poder decir: esto antes me protegia, pero hoy me achica.</p>
+            <p>Cuando una meta te rompa, no preguntes solo si eres disciplinado. Pregunta que amenaza trae pegada.</p>
+            <p>Si no logro esto, que temo perder? Amor? Valor? Pertenencia? Seguridad? Autonomia? Futuro? Imagen? Control?</p>
+            <p>Esa pregunta no resuelve todo. Pero prende la luz correcta.</p>
+            <p>Un objetivo no cae en el aire. Golpea algun sistema de la mente. Si una demanda pide exposicion social, golpea tus habilidades sociales y tu alarma de rechazo. Si pide rendimiento, golpea atencion, energia, recompensa y miedo a fallar. Si pide cuerpo perfecto, golpea comparacion, amenaza, habitos, identidad y pertenencia.</p>
+            <p>Por eso el siguiente capitulo va a dar un paso mas. Si el mundo te pide ser alguien todo el tiempo, necesitamos mirar con que herramientas responde tu mente. No para culparte. Para saber que competencia falta, cual esta saturada y cual puede empezar a entrenarse en la vida real.</p>
+          </div>
+          <div class="callout rose">
+            <h3>Frase para llevar</h3>
+            <p>Una meta puede guiarte. Tambien puede usarte. La diferencia empieza a verse cuando preguntas de donde viene y que te cobra.</p>
+          </div>
+          <div class="practice">
+            <h3>Palanca pequena</h3>
+            <p>Completa estas cuatro lineas con una situacion concreta:</p>
+            <ol>
+              <li>Quiero ___.</li>
+              <li>Aprendi a quererlo de ___.</li>
+              <li>Si no lo logro, temo ___.</li>
+              <li>Hoy puedo renegociar ___.</li>
+            </ol>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>La psicologia de metas, la teoria de autodeterminacion, el aprendizaje social, la comparacion social y los modelos de desarrollo a lo largo de la vida sostienen la idea de fondo: los objetivos organizan conducta y afecto, pero tambien son aprendidos, culturales y sensibles a la etapa vital.</p>
+              <ul>
+                <li>Austin &amp; Vancouver; Locke &amp; Latham; Carver &amp; Scheier: metas, control y progreso.</li>
+                <li>Ryan &amp; Deci; Kasser &amp; Ryan: motivacion autonoma, motivacion controlada y metas intrinsecas/extrinsecas.</li>
+                <li>Bandura; Rescorla &amp; Wagner; Robinson &amp; Berridge; Wood &amp; Runger: aprendizaje, condicionamiento, deseo y habito.</li>
+                <li>Markus &amp; Kitayama; Festinger; Baumeister &amp; Leary; Lund et al.: cultura, comparacion, pertenencia y determinantes sociales.</li>
+                <li>Neugarten et al.; Arnett; Elder; Baltes; Carstensen et al.: relojes sociales, etapa de vida y cambio de objetivos con el tiempo.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">objetivos</span><span class="tag">cultura</span><span class="tag">aprendizaje</span><span class="tag">pertenencia</span><span class="tag">etapa vital</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-03" data-search="competencias habilidades sistemas amenaza recompensa cognicion social cuerpo arousal entrenable">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">3</span>
+              <h2>&iquest;Que habilidades usa mi mente para vivir el dia?</h2>
+              <p class="thesis">Una competencia es una forma de responder mejor a una demanda. No se entrena en abstracto; se entrena para la vida que necesitas poder vivir.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-03"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-03"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>Tu mente no falla como una sola pieza.</p>
+            <p>Un dia normal pide muchas herramientas: levantarte, anticipar peligro, buscar algo que valga la pena, recordar, inhibirte, hablar, leer a otros, tolerar verguenza, regular el cuerpo, comer, moverte, dormir.</p>
+            <p>Cuando todo eso se junta, decir "estoy mal" puede ser demasiado grueso. A veces lo que esta saturado es tu sistema de amenaza. A veces es recompensa: nada llama, nada empuja, nada prende. A veces es cognicion: sabes que importa, pero no logras organizarte. A veces es lo social: una mirada te pesa como sentencia. A veces es arousal: tu cuerpo no sube o no baja. A veces es cuerpo: te cuesta habitarlo sin pelear con el.</p>
+            <p>Por eso aqui usaremos una palabra central: competencias.</p>
+            <p>No como "talentos". No como "virtudes". Competencias como habilidades entrenables para responder a demandas reales.</p>
+            <p>Hoy puedes necesitar competencia social nivel 2: contestar un mensaje sin desaparecer. En otro momento de tu vida puedes necesitar nivel 5: sostener liderazgo, conflicto, exposicion y afecto sin romperte. No saltas de 2 a 5 por deseo. Subes por practica, exposicion, repeticion, feedback, ambiente y vida diaria.</p>
+          </div>
+          <div class="callout green">
+            <h3>El giro</h3>
+            <p>No preguntes solo "que diagnostico tengo". Pregunta tambien: "&iquest;que competencia esta sobreexigida por la vida que estoy intentando sostener?".</p>
+          </div>
+          <div class="practice">
+            <h3>Palanca pequena</h3>
+            <p>Elige un problema de esta semana y marca el sistema mas exigido:</p>
+            <ul>
+              <li>Amenaza: miedo, verguenza, rechazo, peligro.</li>
+              <li>Recompensa: deseo, energia, placer, motivacion.</li>
+              <li>Cognicion: atencion, memoria, plan, inhibicion.</li>
+              <li>Social: pedir, decir no, leer al otro, pertenecer.</li>
+              <li>Regulacion/cuerpo: dormir, activar, bajar, sentir.</li>
+            </ul>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>RDoC permite traducir salud mental a sistemas funcionales: amenaza, recompensa, cognicion, procesos sociales, arousal/regulacion y dominios vinculados al cuerpo. En el texto principal, esos sistemas aparecen como competencias.</p>
+              <div class="tag-row"><span class="tag">RDoC</span><span class="tag">competencias</span><span class="tag">sistemas funcionales</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-04" data-search="historia exposoma carga mochila aprendizaje expectativa trauma pobreza cuerpo etapa">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">4</span>
+              <h2>&iquest;Por que a mi me pesa mas que a otros?</h2>
+              <p class="thesis">La misma demanda no pesa igual en dos personas distintas, porque ninguna llega al presente sin historia.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-04"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-04"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>Hay frases que parecen justas hasta que miras la mochila.</p>
+            <p>"A todos nos pasa". "Todos tenemos estres". "Todos tienen que esforzarse". Puede ser cierto. Tambien puede ser incompleto.</p>
+            <p>No todos llegan a la misma escena desde el mismo punto de partida. La misma critica pesa distinto si creciste bajo critica constante. La misma espera pesa distinto si vienes de abandono. El mismo examen pesa distinto si cada error fue usado para decirte quien eras. El mismo silencio pesa distinto si ya perdiste demasiado.</p>
+            <p>Tu historia no te condena. Pero cambia el peso.</p>
+            <p>Historia no significa solo trauma. Tambien es pobreza, enfermedad, migracion, bullying, rechazo, privilegio, escuela, cuerpo, perdida, discriminacion, soledad, pantallas, sueno roto, familia, barrio, oportunidades y repeticion.</p>
+            <p>La mente aprende a esperar lo que mas se repitio. Si se repitio peligro, espera peligro. Si se repitio comparacion, convierte escenas simples en examenes. Si se repitio inconsistencia, puede agarrarse demasiado fuerte o soltar antes de tiempo.</p>
+            <p>No elegiste toda la mochila. Pero si puedes mirar que estas cargando.</p>
+          </div>
+          <div class="callout rose">
+            <h3>Sin culpa, sin excusa barata</h3>
+            <p>Entender tu historia no es justificar todo lo que haces. Es saber por que una demanda pesa mas de lo que parece.</p>
+          </div>
+          <div class="practice">
+            <h3>Palanca pequena</h3>
+            <p>Escribe una demanda actual. Luego responde: "&iquest;Que experiencia vieja hace que esto pese mas de lo que otros ven?".</p>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>El concepto de carga alostatica ayuda a pensar como adaptaciones repetidas tienen costo acumulado. El staging clinico recuerda que el momento de vida y la trayectoria importan: no es igual intervenir temprano, tarde, en crisis o en recuperacion.</p>
+              <ul>
+                <li>McEwen, allostasis/allostatic load.</li>
+                <li>McGorry, clinical staging.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">exposoma</span><span class="tag">carga</span><span class="tag">trayectoria</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-05" data-search="bucle expectativas aprendidas priors sintomas red rumiacion cadena alarma">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">5</span>
+              <h2>&iquest;Por que un problema pequeno se vuelve un bucle?</h2>
+              <p class="thesis">A veces no reaccionas solo a lo que paso. Reaccionas a lo que tu mente aprendio a esperar que pase.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-05"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-05"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>Un mensaje puede ser solo un mensaje.</p>
+            <p>Tambien puede ser la primera ficha.</p>
+            <p>Llega una notificacion. Tu cuerpo sube. Tu mente completa lo que falta: "seguro se molesto", "seguro me van a dejar", "seguro falle", "seguro esto termina mal". No reaccionas solo al presente. Reaccionas al presente mas una expectativa aprendida.</p>
+            <p>Luego viene la cadena. Revisas. No alcanza. Relees. Te activas. Duermes peor. Al dia siguiente estas mas sensible. Contestaste mal. Ahora si hay conflicto. El conflicto confirma la expectativa. La mente dice: "viste, tenia razon".</p>
+            <p>Ese es el bucle.</p>
+            <p>No siempre empieza con algo enorme. A veces empieza con una ficha pequena: un correo, un gesto, una frase, una demora, un silencio, una mirada. El problema no es solo la ficha. Es la red que se activa despues.</p>
+            <p>Si solo miras la primera ficha, te culpas. Si miras la cadena, aparecen palancas.</p>
+          </div>
+          <div class="callout blue">
+            <h3>Nombre humano</h3>
+            <p>No vamos a llamar esto "priors" en la puerta de entrada. Lo llamaremos expectativas aprendidas.</p>
+          </div>
+          <div class="practice">
+            <h3>Palanca pequena</h3>
+            <p>Dibuja tu cadena en cinco fichas:</p>
+            <ol>
+              <li>Disparador.</li>
+              <li>Expectativa aprendida.</li>
+              <li>Respuesta automatica.</li>
+              <li>Costo.</li>
+              <li>Confirmacion falsa o parcial.</li>
+            </ol>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>La teoria de redes en psicopatologia permite explicar como sintomas o respuestas se activan entre si y mantienen estados repetidos. Para el lector: un sintoma puede ser la primera ficha, no toda la historia.</p>
+              <ul>
+                <li>Borsboom, network theory of mental disorders.</li>
+                <li>Borsboom &amp; Cramer, network analysis.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">redes</span><span class="tag">bucle</span><span class="tag">expectativas aprendidas</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-06" data-search="metacontrol flexibilidad acceso puerta camino medio budismo impulso persistencia cambio">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">6</span>
+              <h2>&iquest;Por que a veces si puedo, me quedo en lo mismo?</h2>
+              <p class="thesis">Darse cuenta prende la luz. Metacontrol es poder moverte con la luz prendida.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-06"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-06"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>Hay una forma de sufrimiento que confunde mucho: saber y no poder.</p>
+            <p>Sabes que deberias dormir. Sabes que ese mensaje te hace dano. Sabes que abrir la tarea cinco minutos seria mejor que pelear una hora. Sabes que respirar antes de responder ayudaria. Sabes que pedir apoyo no te vuelve debil.</p>
+            <p>Y aun asi, cuando sube la demanda, no entras a esa version de ti.</p>
+            <p>No siempre falta habilidad. A veces falta acceso a la habilidad.</p>
+            <p>Ruth puede saber descansar, pero cuando llega un correo de noche, descansar se siente como perder terreno. Kai puede saber negociar, pero si siente control encima, su sistema entra en oposicion. Maria puede saber preguntar antes de ordenar, pero si imagina peligro para su hijo, el control toma el volante. Steven puede saber que releer mensajes no ayuda, pero soltar se siente como aceptar una perdida completa.</p>
+            <p>A esa puerta la llamaremos metacontrol.</p>
+            <p>Metacontrol no es fuerza de voluntad con traje elegante. Es la capacidad de cambiar de modo cuando conviene: persistir sin volverte rigido, soltar sin escapar, actualizar una meta sin traicionarte y observar el impulso antes de obedecerlo.</p>
+            <p>Aqui hay un puente con una idea vieja y simple: camino medio. No quedar pegado. No huir por panico. Mirar el impulso, sentirlo, y no convertirlo automaticamente en orden.</p>
+          </div>
+          <div class="callout green">
+            <h3>La puerta</h3>
+            <p>Poder no basta si la puerta no abre. La pregunta es: &iquest;que modo tomo el volante y que puerta pequena puedo abrir primero?</p>
+          </div>
+          <div class="practice">
+            <h3>Palanca pequena</h3>
+            <p>En una situacion repetida, escribe tres lineas:</p>
+            <ol>
+              <li>Modo que tomo el volante: control, oposicion, rendimiento, rumiacion, escape.</li>
+              <li>Lo que intentaba proteger: valor, autonomia, seguridad, amor, futuro.</li>
+              <li>Una puerta pequena: esperar 90 segundos, pedir pausa, escribir antes de responder, caminar, pedir ayuda.</li>
+            </ol>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>La literatura de metacontrol habla de balance entre persistencia y flexibilidad. El valor esperado del control recuerda que controlar cuesta. Las redes de saliencia, control ejecutivo y modo por defecto se han estudiado en cambios de modo, pero el libro no reduce metacontrol a una sola red cerebral.</p>
+              <ul>
+                <li>Hommel, persistence/flexibility.</li>
+                <li>Shenhav et al., Expected Value of Control.</li>
+                <li>Sridharan et al., switching between major networks.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">metacontrol</span><span class="tag">flexibilidad</span><span class="tag">acceso</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-07" data-search="cambio entrenar habilidad competencias metas carga flexibilidad exposicion practica">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">7</span>
+              <h2>&iquest;Como puedo entrenar una habilidad sin culparme?</h2>
+              <p class="thesis">Cambiar no es gritarte mas fuerte. Es mover la relacion entre lo que la vida te pide y lo que hoy puedes responder.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-07"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-07"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>Cambiar no es querer con mas violencia.</p>
+            <p>Si fuera solo voluntad, ya lo habrias hecho.</p>
+            <p>Cambiar puede significar desarrollar una competencia. Tambien puede significar reducir carga, adaptar metas, compensar una limitacion, pedir apoyo, cambiar ambiente o dejar de intentar nivel 5 cuando tu vida actual solo puede sostener nivel 2.</p>
+            <p>Esto no es bajar estandares por cobardia. Es estrategia.</p>
+            <p>Si hoy necesitas competencia social 2, el trabajo puede ser contestar un mensaje honesto sin desaparecer. Si en dos anos quieres sostener una vida con mas exposicion, liderazgo o intimidad, probablemente necesites competencia 4 o 5. Eso se construye. No se decreta.</p>
+            <p>La vida diaria es el gimnasio principal. La terapia puede preparar, ordenar y sostener practica. Pero la maestria aparece cuando esa habilidad entra al dia real: el mensaje real, la reunion real, la familia real, el cuerpo real, el cansancio real.</p>
+            <p>Entrenar no es culparte. Es crear condiciones para que una habilidad aparezca con menos heroismo.</p>
+          </div>
+          <div class="callout blue">
+            <h3>Regla de escalera</h3>
+            <p>No saltes de 2 a 5. Sube de 2 a 3, domina 3, luego deja que la vida y la practica pidan 4.</p>
+          </div>
+          <div class="practice">
+            <h3>Palanca pequena</h3>
+            <p>Elige una habilidad y dise&ntilde;a su version de dos minutos. Debe ser tan pequena que puedas practicarla incluso con poca energia.</p>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>Los enfoques transdiagnosticos, la exposicion graduada, la activacion conductual y el trabajo con procesos emocionales sostienen la idea de practicar respuestas pequenas, repetidas y vinculadas a demandas reales. Cuidado: no todo se entrena igual; algunas cosas se compensan o requieren tratamiento formal.</p>
+              <ul>
+                <li>Barlow et al., Unified Protocol.</li>
+                <li>Behavior change y aprendizaje por exposicion como respaldo general.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">entrenamiento</span><span class="tag">exposicion</span><span class="tag">competencias</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-08" data-search="terapia psicoterapia vivir alianza practica cambio mecanismo vida diaria">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">8</span>
+              <h2>&iquest;Para que sirve ir a terapia?</h2>
+              <p class="thesis">La terapia no es la vida completa. Es un lugar donde puedes practicar para volver a la vida con mas herramientas.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-08"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-08"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>La terapia no reemplaza vivir.</p>
+            <p>Eso puede sonar raro, porque mucha gente llega a terapia esperando que ahi ocurra todo. Y algo ocurre. A veces mucho. Se ordena la historia. Se mira el bucle. Se nombra lo que nadie habia nombrado. Se practica una respuesta. Se construye un vinculo donde no tienes que actuar tanto. Se aprende a tolerar una emocion sin convertirla en destino.</p>
+            <p>Pero la vida no ocurre solo en el consultorio.</p>
+            <p>La terapia prepara. La vida consolida.</p>
+            <p>Una buena terapia no deberia dejarte viviendo para la terapia. Deberia ayudarte a volver mejor equipado al territorio que te cuesta: la conversacion, la tarea, el duelo, el limite, la cama, el cuerpo, la decision, el pedido de ayuda.</p>
+            <p>Eso no la vuelve pequena. La vuelve precisa.</p>
+            <p>Terapia no es hablar por hablar. Es practicar con alguien que sostiene el proceso, observa patrones, propone lenguaje, cuida ritmo y ayuda a no confundir una recaida con identidad.</p>
+          </div>
+          <div class="callout green">
+            <h3>Senal buena</h3>
+            <p>La terapia ayuda cuando empiezas a notar patrones antes, responder distinto aunque sea poco, pedir mejor, reparar mejor o vivir con menos automatismo.</p>
+          </div>
+          <div class="practice">
+            <h3>Palanca pequena</h3>
+            <p>Si estas en terapia o piensas empezar, lleva tres frases:</p>
+            <ol>
+              <li>El bucle que mas se repite es...</li>
+              <li>La habilidad que quiero practicar es...</li>
+              <li>Quiero saber si esto esta ayudando cuando...</li>
+            </ol>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>La evidencia sobre mecanismos de cambio, factores comunes y alianza terapeutica respalda mirar la terapia como proceso: vinculo, marco compartido, practica, emocion y cambio conductual. No toda terapia ayuda igual; la alianza, la claridad de objetivos y el ajuste importan.</p>
+              <ul>
+                <li>Kazdin, mechanisms of change.</li>
+                <li>Wampold, common factors.</li>
+                <li>Fluckiger et al., alliance meta-analysis.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">terapia</span><span class="tag">alianza</span><span class="tag">mecanismos</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-09" data-search="medicacion medicamentos farmacos margen ruido redes cerebrales sueno alarma profesional revision clinica">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">9</span>
+              <h2>&iquest;Cuando ayudan los medicamentos?</h2>
+              <p class="thesis">La medicacion no vive por ti. Pero a veces te devuelve el margen necesario para poder dormir, pensar, practicar o sostenerte.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-09"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-09"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>La medicacion no es identidad.</p>
+            <p>No dice quien eres. No prueba que fallaste. No reemplaza tu vida. Tampoco es una palabra magica que arregla todo sin costo.</p>
+            <p>Es una herramienta. En algunas personas, en algunos momentos, con evaluacion profesional, puede bajar ruido. Puede mejorar sueno. Puede disminuir alarma. Puede permitir pensar. Puede devolver el margen minimo para practicar lo que antes era imposible. En algunos casos, cuando hay problemas clinicos mas intensos, puede ayudar a regular sistemas o redes que estaban desbordadas.</p>
+            <p>La frase importante es "puede".</p>
+            <p>Porque no se trata de hacer propaganda ni de asustar. Se trata de decidir con criterio clinico, seguimiento, objetivos claros y cuidado. Un medicamento puede ser potente. Lo potente puede ayudar. Lo potente tambien merece respeto.</p>
+            <p>Si la terapia prepara y la vida consolida, la medicacion a veces crea el margen para que ambas puedan ocurrir.</p>
+          </div>
+          <div class="callout rose">
+            <h3>Revision clinica requerida</h3>
+            <p>Este capitulo debe ser revisado por un criterio medico antes de publicacion. No debe incluir dosis, indicaciones individuales, inicios, suspensiones ni promesas de efecto.</p>
+          </div>
+          <div class="practice">
+            <h3>Preguntas para consulta</h3>
+            <ol>
+              <li>&iquest;Que problema concreto esperamos mover?</li>
+              <li>&iquest;Como sabremos si esta ayudando?</li>
+              <li>&iquest;Que efectos adversos debo vigilar?</li>
+              <li>&iquest;Que rol tendran terapia, rutina, sueno y red mientras tanto?</li>
+            </ol>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>La evidencia sobre antidepresivos, combinacion de psicoterapia/farmacoterapia y modelos de saliencia permite hablar con matiz: medicacion como herramienta posible, no como guerra contra terapia ni como explicacion total.</p>
+              <ul>
+                <li>Cipriani et al., antidepressants network meta-analysis.</li>
+                <li>Cuijpers et al., psychotherapy and pharmacotherapy.</li>
+                <li>Kapur, aberrant salience, especialmente como caja tecnica prudente.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">NEED CLINICAL REVIEW</span><span class="tag">medicacion</span><span class="tag">margen</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-10" data-search="sueno cuerpo vinculos ambiente rutina ejercicio soledad condiciones vida diaria">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">10</span>
+              <h2>&iquest;Que otras cosas tambien cambian mi mente?</h2>
+              <p class="thesis">Una competencia no aparece en el aire. Aparece, o colapsa, dentro de ciertas condiciones de vida.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>Dormir no es premio.</p>
+            <p>Mover el cuerpo no es castigo. Tener red no es lujo. Ordenar ambiente no es mania. Comer, descansar, caminar, apagar una pantalla, bajar una demanda o pedir compania no son consejitos de bienestar pegados encima de un problema serio.</p>
+            <p>Son condiciones.</p>
+            <p>Ruth no descansa mejor porque le digan "prioriza tu sueno". Descansa mejor cuando entiende que sin sueno su cognicion se rompe y su sistema de amenaza ve fantasmas. Kai no cambia solo porque le quiten pantallas; cambia cuando su ambiente deja de alimentar una recompensa instantanea que vuelve imposible cualquier tarea lenta. Maria no necesita otra lista de crianza perfecta; necesita red para que el cuidado no se convierta en control. Steven no arregla una separacion caminando, pero caminar puede devolverle piso para no hundirse en la misma rumiacion.</p>
+            <p>La verdadera salud mental ocurre en la vida diaria. No porque la vida diaria sea romantica, sino porque ahi se decide si una competencia aparece o colapsa.</p>
+          </div>
+          <div class="callout blue">
+            <h3>No es wellness</h3>
+            <p>Cada condicion importa porque mueve un sistema: arousal, amenaza, recompensa, cognicion, vinculo o cuerpo.</p>
+          </div>
+          <div class="practice">
+            <h3>Palanca pequena</h3>
+            <p>Elige una condicion por siete dias: sueno, movimiento, ambiente, red o comida. No intentes arreglar la vida completa; observa que sistema cambia cuando esa condicion mejora 10%.</p>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>La evidencia sobre sueno, actividad fisica y relaciones sociales permite sostener que las condiciones de vida cambian el funcionamiento mental. El cuidado editorial: no prometer cura ni reemplazar tratamientos indicados.</p>
+              <ul>
+                <li>Scott et al., sleep quality and mental health.</li>
+                <li>Chekroud et al., exercise and mental health.</li>
+                <li>Santini et al. y Holt-Lunstad et al., relaciones, soledad y salud.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">condiciones</span><span class="tag">sueno</span><span class="tag">red</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-11" data-search="ayuda urgente seguridad crisis autolesion suicidio pedir ayuda herramienta riesgo profesional">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">11</span>
+              <h2>&iquest;Como se cuando necesito pedir ayuda ya?</h2>
+              <p class="thesis">Pedir ayuda no significa que el mapa fracaso. Significa que necesitas una herramienta mas para no seguir solo desde este punto.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-11"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-11"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>Si hay humo, primero seguridad. Despues mapa.</p>
+            <p>Eso no significa que tu historia deje de importar. Significa que hay momentos en que la prioridad no es interpretar fino, sino no quedarte solo con algo que ya excedio tus herramientas.</p>
+            <p>Pedir ayuda no es fracasar. Es sumar una herramienta.</p>
+            <p>Casi nadie llega a ese punto "de la nada". Se llega por pasos: noches sin dormir, aislamiento, consumo que se desordena, pensamientos que asustan, impulsos que suben, desesperanza, confusion, perdida de control, autolesion, ideas de no querer vivir, escuchar o ver cosas que otros no perciben, energia peligrosamente acelerada, violencia alrededor o dentro de casa.</p>
+            <p>El punto no es debatir si eres fuerte. El punto es llegar vivo, acompanado y con mas herramientas al siguiente tramo.</p>
+            <p>Cuando el riesgo sube, el mapa no se tira. Se usa con otra prioridad: seguridad, contacto humano, evaluacion profesional, reducir acceso a medios de dano, avisar a alguien confiable, acudir a urgencias o llamar a servicios locales de crisis.</p>
+          </div>
+          <div class="callout rose">
+            <h3>Revision clinica requerida</h3>
+            <p>Este capitulo necesita recursos por pais y revision clinica. En publicacion final debe incluir lineas locales de emergencia y un lenguaje de crisis validado.</p>
+          </div>
+          <div class="practice">
+            <h3>Tarjeta de seguridad</h3>
+            <p>Antes de necesitarla, escribe:</p>
+            <ol>
+              <li>Dos personas a quienes puedo avisar.</li>
+              <li>Un lugar seguro al que puedo ir.</li>
+              <li>Una frase directa: "No estoy seguro solo ahora. Necesito compania".</li>
+              <li>El numero local de emergencia o crisis de mi pais.</li>
+            </ol>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>Guias como NICE NG225 y recursos de OMS/SAMHSA ayudan a construir lenguaje prudente sobre autolesion, suicidio y senales de alerta. El objetivo editorial es orientar sin asustar y sin convertir el capitulo en checklist diagnostico.</p>
+              <ul>
+                <li>NICE NG225, self-harm guideline.</li>
+                <li>SAMHSA warning signs.</li>
+                <li>WHO suicide topic.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">NEED CLINICAL REVIEW</span><span class="tag">seguridad</span><span class="tag">crisis</span></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="chapter" id="capitulo-12" data-search="mapa vida real relacion mundo historia competencias metacontrol palanca cierre">
+          <div class="chapter-header">
+            <div>
+              <span class="chapter-num">12</span>
+              <h2>&iquest;Como uso este mapa en mi vida real?</h2>
+              <p class="thesis">Tu salud mental no es una cosa fija dentro de ti. Es una relacion viva entre lo que el mundo pide, lo que tu historia carga, las competencias que has construido y la puerta que te permite usarlas cuando importa.</p>
+            </div>
+            <div class="chapter-actions">
+              <button class="mini-btn" title="Abrir nota tecnica" type="button" data-open-science="capitulo-12"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+              <a class="mini-btn" title="Copiar enlace del capitulo" href="#capitulo-12"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>
+            </div>
+          </div>
+          <div class="bodycopy">
+            <p>Al final, el mapa no sirve si se queda bonito.</p>
+            <p>Sirve cuando una persona puede detenerse en medio de una escena real y preguntar algo mas util que "que tengo mal?".</p>
+            <p>&iquest;Que me esta pidiendo esto? &iquest;Que historia toca? &iquest;Que competencia esta saturada? &iquest;Que puerta no esta abriendo? &iquest;Que parte puedo mover hoy sin mentirme ni romperme?</p>
+            <p>A veces la palanca sera bajar una demanda. A veces sera cuidar carga. A veces sera entrenar una competencia pequena. A veces sera ajustar una meta. A veces sera terapia. A veces medicacion. A veces dormir. A veces pedir ayuda urgente. A veces aceptar que la vida que quieres necesita mas capacidad, no mas insultos.</p>
+            <p>No eres solo una etiqueta. Tampoco eres puro contexto. Tampoco eres pura voluntad. Eres una relacion viva entre mundo, historia, competencias y metacontrol.</p>
+            <p>Eso no te da control total. Te da una puerta.</p>
+          </div>
+          <div class="practice">
+            <h3>Ficha de vida real</h3>
+            <p>Completa esta ficha con una situacion especifica, no con "mi vida entera".</p>
+            <div class="worksheet">
+              <div class="field"><strong>Demanda</strong><span>La vida me esta pidiendo...</span></div>
+              <div class="field"><strong>Historia</strong><span>Esto pesa mas porque aprendi...</span></div>
+              <div class="field"><strong>Competencia</strong><span>La habilidad sobreexigida es...</span></div>
+              <div class="field"><strong>Metacontrol</strong><span>La puerta que se cierra es...</span></div>
+              <div class="field"><strong>Palanca 24h</strong><span>Hoy puedo mover 10% de...</span></div>
+              <div class="field"><strong>Ayuda</strong><span>Si esto excede mis herramientas, voy a...</span></div>
+            </div>
+          </div>
+          <details class="science">
+            <summary>La ciencia debajo del capot</summary>
+            <div class="science-body">
+              <p>Las intenciones de implementacion y taxonomias de cambio conductual ayudan a pasar de insight a accion. El cierre debe ser taller, no inspiracion vaga.</p>
+              <ul>
+                <li>Gollwitzer, implementation intentions.</li>
+                <li>Michie et al., behavior change technique taxonomy.</li>
+              </ul>
+              <div class="tag-row"><span class="tag">accion</span><span class="tag">palanca</span><span class="tag">vida real</span></div>
+            </div>
+          </details>
+        </article>
+
+        <footer class="book-footer">
+          <p><strong>Estado editorial:</strong> v0.1 navegable. Sirve para probar voz, arquitectura, legibilidad y flujo de lectura antes de redactar capitulos completos.</p>
+          <ul class="footer-list">
+            <li>Canon de voz: Voice Bible Psicopato pa todos.</li>
+            <li>Canon de contenido: Ideas centrales por capitulo.</li>
+            <li>Pendiente critico: revision clinica de capitulos 9 y 11.</li>
+          </ul>
+        </footer>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const body = document.body;
+    const nav = document.getElementById('nav');
+    const navLinks = Array.from(nav.querySelectorAll('a'));
+    const chapters = Array.from(document.querySelectorAll('.chapter'));
+    const searchInput = document.getElementById('searchInput');
+    const noResults = document.getElementById('noResults');
+    const progressBar = document.getElementById('progressBar');
+    const openDrawer = document.getElementById('openDrawer');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    const expandAll = document.getElementById('expandAll');
+    const printBook = document.getElementById('printBook');
+
+    function closeDrawer() {
+      body.classList.remove('drawer-open');
+    }
+
+    function updateProgress() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = max > 0 ? Math.min(100, Math.max(0, (scrollTop / max) * 100)) : 0;
+      progressBar.style.width = percent + '%';
+    }
+
+    function updateActiveNav() {
+      const visibleChapters = chapters.filter((chapter) => !chapter.classList.contains('hidden'));
+      let current = 'portada';
+      const candidates = [document.getElementById('portada'), document.getElementById('mapa'), ...visibleChapters];
+      for (const section of candidates) {
+        if (!section) continue;
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 140) current = section.id;
+      }
+      navLinks.forEach((link) => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+      });
+    }
+
+    function filterChapters() {
+      const query = searchInput.value.trim().toLowerCase();
+      let matches = 0;
+      chapters.forEach((chapter) => {
+        const text = (chapter.innerText + ' ' + chapter.dataset.search).toLowerCase();
+        const show = !query || text.includes(query);
+        chapter.classList.toggle('hidden', !show);
+        if (show) matches += 1;
+      });
+      noResults.classList.toggle('visible', query.length > 0 && matches === 0);
+      updateActiveNav();
+    }
+
+    function toggleScience(chapterId) {
+      const chapter = document.getElementById(chapterId);
+      const details = chapter ? chapter.querySelector('details.science') : null;
+      if (details) details.open = !details.open;
+    }
+
+    window.addEventListener('scroll', () => {
+      updateProgress();
+      updateActiveNav();
+    }, { passive: true });
+
+    window.addEventListener('resize', updateProgress);
+
+    searchInput.addEventListener('input', filterChapters);
+
+    document.querySelectorAll('[data-open-science]').forEach((button) => {
+      button.addEventListener('click', () => toggleScience(button.dataset.openScience));
+    });
+
+    expandAll.addEventListener('click', () => {
+      const all = Array.from(document.querySelectorAll('details.science'));
+      const shouldOpen = all.some((item) => !item.open);
+      all.forEach((item) => { item.open = shouldOpen; });
+      expandAll.setAttribute('aria-pressed', shouldOpen ? 'true' : 'false');
+    });
+
+    printBook.addEventListener('click', () => window.print());
+
+    openDrawer.addEventListener('click', () => body.classList.add('drawer-open'));
+    drawerBackdrop.addEventListener('click', closeDrawer);
+    navLinks.forEach((link) => link.addEventListener('click', closeDrawer));
+
+    updateProgress();
+    updateActiveNav();
+  </script>
+</body>
+</html>

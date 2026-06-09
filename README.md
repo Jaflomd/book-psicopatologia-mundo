@@ -1,0 +1,27 @@
+# Psicopatologia para el mundo
+
+Entregable navegable del proyecto `book-psicopatologia-mundo`.
+
+Estado: v0.1 WIP con los capitulos 1 y 2 expandidos como modelo largo.
+
+## Archivos
+
+- `index.html` - version navegable principal.
+- `psicopato-pa-todos-v0-1.html` - copia versionada del mismo HTML.
+
+## Capitulos expandidos
+
+1. `Es normal sentir que no encajo en mi diagnostico?`
+   - Mini-historia del diagnostico psiquiatrico, DSM-III, Hacking y giro dimensional.
+2. `Por que el mundo me pide ser alguien todo el tiempo?`
+   - Objetivos aprendidos, cultura, etapa vital, amor/valor/pertenencia y demandas renegociables.
+
+Los capitulos 3-12 existen como esqueleto navegable y se expandiran en iteraciones posteriores.
+
+## Fuente WIP
+
+La fuente editorial viva esta en:
+
+`2-wip/book-psicopatologia-mundo/`
+
+Este repo publica solo el entregable HTML, no toda la memoria editorial ni los dossiers de trabajo.

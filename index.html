@@ -217,6 +217,10 @@
       color: #123f3d;
     }
 
+    .nav a.hidden-nav {
+      display: none;
+    }
+
     .nav-num {
       width: 26px;
       height: 26px;
@@ -410,6 +414,24 @@
       padding: 54px 0 42px;
       border-bottom: 1px solid var(--line);
       scroll-margin-top: 20px;
+    }
+
+    body.single-view .hero,
+    body.single-view .section,
+    body.single-view .chapter,
+    body.single-view .book-footer {
+      display: none;
+    }
+
+    body.single-view[data-view="intro"] .hero,
+    body.single-view[data-view="intro"] .section,
+    body.single-view[data-view="intro"] .book-footer,
+    body.single-view .chapter.active-view {
+      display: block;
+    }
+
+    body.single-view .chapter.active-view {
+      border-bottom: 0;
     }
 
     .chapter.hidden {
@@ -703,6 +725,52 @@
       display: block;
     }
 
+    .chapter-pager {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 18px 0 8px;
+    }
+
+    body.single-view:not([data-view="intro"]) .chapter-pager {
+      display: grid;
+    }
+
+    .pager-link {
+      min-height: 68px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 12px 14px;
+      display: grid;
+      align-content: center;
+      gap: 3px;
+      box-shadow: var(--shadow);
+    }
+
+    .pager-link:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .pager-link span {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .pager-link strong {
+      font-size: 0.93rem;
+      line-height: 1.28;
+      color: var(--ink);
+    }
+
+    .pager-next {
+      text-align: right;
+    }
+
     @media (max-width: 1080px) {
       :root {
         --sidebar: 278px;
@@ -789,6 +857,14 @@
         display: block;
         overflow-x: auto;
       }
+
+      .chapter-pager {
+        grid-template-columns: 1fr;
+      }
+
+      .pager-next {
+        text-align: left;
+      }
     }
 
     @media print {
@@ -816,6 +892,17 @@
 
       .chapter {
         break-before: page;
+      }
+
+      body.single-view .hero,
+      body.single-view .section,
+      body.single-view .chapter,
+      body.single-view .book-footer {
+        display: block;
+      }
+
+      .chapter-pager {
+        display: none !important;
       }
 
       details.science {
@@ -948,6 +1035,17 @@
         </section>
 
         <div class="no-results" id="noResults">No encontre capitulos con esa busqueda. Prueba con "diagnostico", "metacontrol", "terapia", "medicacion" o "ayuda".</div>
+
+        <div class="chapter-pager" data-pager aria-label="Navegacion del capitulo">
+          <a class="pager-link pager-prev" href="#portada">
+            <span>Anterior</span>
+            <strong>Portada y mapa</strong>
+          </a>
+          <a class="pager-link pager-next" href="#capitulo-02">
+            <span>Siguiente</span>
+            <strong>2. Demandas del mundo</strong>
+          </a>
+        </div>
 
         <article class="chapter" id="capitulo-01" data-search="diagnostico etiqueta realidad historia mundo competencias">
           <div class="chapter-header">
@@ -1620,6 +1718,17 @@
           </details>
         </article>
 
+        <div class="chapter-pager" data-pager aria-label="Navegacion del capitulo">
+          <a class="pager-link pager-prev" href="#portada">
+            <span>Anterior</span>
+            <strong>Portada y mapa</strong>
+          </a>
+          <a class="pager-link pager-next" href="#capitulo-02">
+            <span>Siguiente</span>
+            <strong>2. Demandas del mundo</strong>
+          </a>
+        </div>
+
         <footer class="book-footer">
           <p><strong>Estado editorial:</strong> v0.1 navegable. Sirve para probar voz, arquitectura, legibilidad y flujo de lectura antes de redactar capitulos completos.</p>
           <ul class="footer-list">
@@ -1644,6 +1753,10 @@
     const drawerBackdrop = document.getElementById('drawerBackdrop');
     const expandAll = document.getElementById('expandAll');
     const printBook = document.getElementById('printBook');
+    const pagers = Array.from(document.querySelectorAll('[data-pager]'));
+    const viewIds = new Set(['portada', 'mapa', ...chapters.map((chapter) => chapter.id)]);
+
+    body.classList.add('single-view');
 
     function closeDrawer() {
       body.classList.remove('drawer-open');
@@ -1656,31 +1769,67 @@
       progressBar.style.width = percent + '%';
     }
 
-    function updateActiveNav() {
-      const visibleChapters = chapters.filter((chapter) => !chapter.classList.contains('hidden'));
-      let current = 'portada';
-      const candidates = [document.getElementById('portada'), document.getElementById('mapa'), ...visibleChapters];
-      for (const section of candidates) {
-        if (!section) continue;
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= 140) current = section.id;
-      }
-      navLinks.forEach((link) => {
-        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    function getViewId() {
+      const raw = window.location.hash.replace('#', '');
+      return viewIds.has(raw) ? raw : 'portada';
+    }
+
+    function chapterLabel(chapter) {
+      const number = chapter.querySelector('.chapter-num')?.textContent.trim() || '';
+      const title = chapter.querySelector('h2')?.textContent.trim() || 'Capitulo';
+      return `${number}. ${title}`;
+    }
+
+    function updatePagers(current) {
+      const index = chapters.findIndex((chapter) => chapter.id === current);
+      if (index < 0) return;
+      const previousHref = index === 0 ? '#portada' : `#${chapters[index - 1].id}`;
+      const previousLabel = index === 0 ? 'Portada y mapa' : chapterLabel(chapters[index - 1]);
+      const nextHref = index === chapters.length - 1 ? '#portada' : `#${chapters[index + 1].id}`;
+      const nextLabel = index === chapters.length - 1 ? 'Volver al mapa' : chapterLabel(chapters[index + 1]);
+      pagers.forEach((pager) => {
+        const previous = pager.querySelector('.pager-prev');
+        const next = pager.querySelector('.pager-next');
+        previous.href = previousHref;
+        previous.querySelector('strong').textContent = previousLabel;
+        next.href = nextHref;
+        next.querySelector('strong').textContent = nextLabel;
       });
+    }
+
+    function showView(options = {}) {
+      const current = getViewId();
+      const isIntro = current === 'portada' || current === 'mapa';
+      body.dataset.view = isIntro ? 'intro' : current;
+      chapters.forEach((chapter) => {
+        chapter.classList.toggle('active-view', chapter.id === current);
+      });
+      if (!isIntro) updatePagers(current);
+      navLinks.forEach((link) => {
+        const href = link.getAttribute('href');
+        const active = isIntro ? href === '#portada' : href === `#${current}`;
+        link.classList.toggle('active', active);
+      });
+      if (options.scrollTop !== false) window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      updateProgress();
     }
 
     function filterChapters() {
       const query = searchInput.value.trim().toLowerCase();
       let matches = 0;
-      chapters.forEach((chapter) => {
-        const text = (chapter.innerText + ' ' + chapter.dataset.search).toLowerCase();
+      navLinks.forEach((link) => {
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#capitulo-')) {
+          link.classList.remove('hidden-nav');
+          return;
+        }
+        const chapter = document.querySelector(href);
+        const text = ((chapter?.innerText || '') + ' ' + (chapter?.dataset.search || '')).toLowerCase();
         const show = !query || text.includes(query);
-        chapter.classList.toggle('hidden', !show);
+        link.classList.toggle('hidden-nav', !show);
         if (show) matches += 1;
       });
       noResults.classList.toggle('visible', query.length > 0 && matches === 0);
-      updateActiveNav();
     }
 
     function toggleScience(chapterId) {
@@ -1691,10 +1840,10 @@
 
     window.addEventListener('scroll', () => {
       updateProgress();
-      updateActiveNav();
     }, { passive: true });
 
     window.addEventListener('resize', updateProgress);
+    window.addEventListener('hashchange', () => showView());
 
     searchInput.addEventListener('input', filterChapters);
 
@@ -1713,10 +1862,19 @@
 
     openDrawer.addEventListener('click', () => body.classList.add('drawer-open'));
     drawerBackdrop.addEventListener('click', closeDrawer);
-    navLinks.forEach((link) => link.addEventListener('click', closeDrawer));
+    navLinks.forEach((link) => link.addEventListener('click', () => {
+      closeDrawer();
+      if (link.getAttribute('href') === window.location.hash) showView();
+    }));
+    pagers.forEach((pager) => {
+      pager.addEventListener('click', (event) => {
+        const link = event.target.closest('a');
+        if (link && link.getAttribute('href') === window.location.hash) showView();
+      });
+    });
 
-    updateProgress();
-    updateActiveNav();
+    filterChapters();
+    showView({ scrollTop: false });
   </script>
 </body>
 </html>

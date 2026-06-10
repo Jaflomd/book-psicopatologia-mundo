@@ -279,6 +279,161 @@
       margin-bottom: 28px;
     }
 
+    .cover-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.95fr);
+      gap: 28px;
+      align-items: stretch;
+      margin-top: 24px;
+    }
+
+    .cover-copy {
+      display: grid;
+      align-content: center;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    .cover-art {
+      position: relative;
+      min-height: 520px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, rgba(30, 107, 104, 0.16), transparent 42%),
+        linear-gradient(25deg, rgba(40, 79, 143, 0.10), transparent 54%),
+        #f3efe6;
+      box-shadow: var(--shadow);
+    }
+
+    .cover-art::before,
+    .cover-art::after {
+      content: "";
+      position: absolute;
+      inset: 38px;
+      border: 1px solid rgba(30, 107, 104, 0.24);
+      border-radius: 50%;
+    }
+
+    .cover-art::after {
+      inset: 92px 52px 74px 96px;
+      border-color: rgba(139, 71, 93, 0.24);
+      transform: rotate(-18deg);
+    }
+
+    .cover-title {
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      top: 34px;
+      display: grid;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .cover-title span {
+      width: fit-content;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--accent);
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .cover-title strong {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.35rem);
+      line-height: 0.98;
+      max-width: 7.5em;
+    }
+
+    .cover-title small {
+      max-width: 24em;
+      color: #4f493f;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .cover-map {
+      position: absolute;
+      inset: auto 30px 82px 30px;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .cover-node {
+      min-height: 74px;
+      border: 1px solid rgba(201, 192, 179, 0.92);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.72);
+      padding: 12px;
+      display: grid;
+      gap: 3px;
+    }
+
+    .cover-node strong {
+      color: var(--ink);
+      font-size: 0.82rem;
+    }
+
+    .cover-node span {
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.28;
+    }
+
+    .cover-author {
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      bottom: 26px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      color: #4f493f;
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .front-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .front-meta div {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 12px;
+    }
+
+    .front-meta strong {
+      display: block;
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .front-meta span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-top: 3px;
+    }
+
     .kicker {
       margin: 0 0 16px;
       color: var(--accent);
@@ -423,9 +578,8 @@
       display: none;
     }
 
-    body.single-view[data-view="intro"] .hero,
-    body.single-view[data-view="intro"] .section,
-    body.single-view[data-view="intro"] .book-footer,
+    body.single-view .hero.active-view,
+    body.single-view .section.active-view,
     body.single-view .chapter.active-view {
       display: block;
     }
@@ -732,7 +886,7 @@
       margin: 18px 0 8px;
     }
 
-    body.single-view:not([data-view="intro"]) .chapter-pager {
+    body.single-view[data-view^="capitulo-"] .chapter-pager {
       display: grid;
     }
 
@@ -779,6 +933,14 @@
       .hero-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
+      .cover-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .cover-art {
+        min-height: 470px;
+      }
     }
 
     @media (max-width: 820px) {
@@ -819,6 +981,15 @@
 
       .hero {
         padding-top: 34px;
+      }
+
+      .front-meta,
+      .cover-map {
+        grid-template-columns: 1fr;
+      }
+
+      .cover-art {
+        min-height: 660px;
       }
 
       .hero h2 {
@@ -941,8 +1112,10 @@
         </div>
       </div>
       <nav class="nav" id="nav">
-        <div class="nav-label">Entrada</div>
-        <a href="#portada"><span class="nav-num">0</span><span>Portada y mapa de lectura</span></a>
+        <div class="nav-label">Front matter</div>
+        <a href="#portada"><span class="nav-num">0</span><span>Portada</span></a>
+        <a href="#derechos"><span class="nav-num">&copy;</span><span>Derechos de autor</span></a>
+        <a href="#indice"><span class="nav-num">i</span><span>Indice</span></a>
         <div class="nav-label">Capitulos</div>
         <a href="#capitulo-01"><span class="nav-num">1</span><span>&iquest;Es normal sentir que no encajo en mi diagnostico?</span></a>
         <a href="#capitulo-02"><span class="nav-num">2</span><span>&iquest;Por que el mundo me pide ser alguien todo el tiempo?</span></a>
@@ -970,66 +1143,120 @@
 
       <div class="page">
         <header class="hero" id="portada">
-          <p class="kicker">Borrador de taller | public reader</p>
-          <h2>Psicopatologia para el mundo</h2>
-          <p class="subtitle">
-            Un mapa para entender lo que el mundo te pide, la historia que cargas,
-            las competencias que puedes construir y la puerta que necesitas abrir
-            para usar lo que sabes cuando importa.
-          </p>
-          <div class="hero-grid" aria-label="Los cuatro lentes del libro">
-            <div class="lens">
-              <strong>Mundo</strong>
-              <span>Demandas de exito, productividad, deseabilidad, normalidad, amor y pertenencia.</span>
+          <div class="cover-layout">
+            <div class="cover-copy">
+              <div>
+                <p class="kicker">Borrador de taller | public reader</p>
+                <h2>Psicopatologia para el mundo</h2>
+                <p class="subtitle">
+                  Un mapa para entender lo que el mundo te pide, la historia que cargas,
+                  las competencias que puedes construir y la puerta que necesitas abrir
+                  para usar lo que sabes cuando importa.
+                </p>
+              </div>
+              <div class="front-meta" aria-label="Datos de portada">
+                <div>
+                  <strong>Autor</strong>
+                  <span>Javier Flores</span>
+                </div>
+                <div>
+                  <strong>Version</strong>
+                  <span>Manuscrito navegable v0.1</span>
+                </div>
+                <div>
+                  <strong>Lectores</strong>
+                  <span>Publico general, docentes, familias y clinicos no especializados.</span>
+                </div>
+                <div>
+                  <strong>Estado</strong>
+                  <span>Borrador vivo para revision editorial y clinica.</span>
+                </div>
+              </div>
+              <div class="notice">
+                Este archivo educa y ordena ideas. No diagnostica, no reemplaza terapia,
+                no reemplaza evaluacion medica y requiere revision clinica fina en los
+                capitulos de medicacion y ayuda urgente.
+              </div>
             </div>
-            <div class="lens">
-              <strong>Historia</strong>
-              <span>Lo que aprendiste a esperar, lo que ya venias cargando y el peso que eso agrega.</span>
+            <div class="cover-art" aria-label="Portada visual del libro">
+              <div class="cover-title">
+                <span>Mapa vivo</span>
+                <strong>Psicopatologia para el mundo</strong>
+                <small>Demanda, historia, competencias y metacontrol para entender la vida real.</small>
+              </div>
+              <div class="cover-map" aria-hidden="true">
+                <div class="cover-node"><strong>Mundo</strong><span>Lo que la vida pide.</span></div>
+                <div class="cover-node"><strong>Historia</strong><span>Lo que ya venias cargando.</span></div>
+                <div class="cover-node"><strong>Competencias</strong><span>Lo que puedes entrenar.</span></div>
+                <div class="cover-node"><strong>Metacontrol</strong><span>La puerta que abre acceso.</span></div>
+              </div>
+              <div class="cover-author">
+                <span>Javier Flores</span>
+                <span>v0.1</span>
+              </div>
             </div>
-            <div class="lens">
-              <strong>Competencias</strong>
-              <span>Habilidades entrenables para amenaza, recompensa, cognicion, vinculo, cuerpo y regulacion.</span>
-            </div>
-            <div class="lens">
-              <strong>Metacontrol</strong>
-              <span>La puerta que permite cambiar de modo, actualizar metas y no obedecer el primer impulso.</span>
-            </div>
-          </div>
-          <div class="notice">
-            Este archivo es un borrador navegable v0.1. Educa y ordena ideas, pero no diagnostica,
-            no reemplaza terapia, no reemplaza evaluacion medica y requiere revision clinica fina
-            en los capitulos de medicacion y ayuda urgente.
           </div>
         </header>
 
-        <section class="section" id="mapa">
-          <h2>Como se lee este libro</h2>
+        <section class="section" id="derechos">
+          <p class="kicker">Pagina legal</p>
+          <h2>Derechos de autor</h2>
+          <p><strong>Psicopatologia para el mundo</strong> es un manuscrito en desarrollo de Javier Flores. Esta version navegable v0.1 fue preparada como borrador editorial para lectura, revision y trabajo de taller.</p>
+          <div class="front-meta" aria-label="Datos legales">
+            <div>
+              <strong>Copyright</strong>
+              <span>&copy; 2026 Javier Flores. Todos los derechos reservados.</span>
+            </div>
+            <div>
+              <strong>Edicion</strong>
+              <span>Manuscrito navegable v0.1 | 10 de junio de 2026.</span>
+            </div>
+            <div>
+              <strong>Uso</strong>
+              <span>No reproducir, vender, adaptar ni distribuir sin autorizacion escrita del autor.</span>
+            </div>
+            <div>
+              <strong>Disclaimer</strong>
+              <span>Contenido educativo. No sustituye diagnostico, tratamiento, psicoterapia ni evaluacion medica.</span>
+            </div>
+          </div>
+          <div class="notice">
+            Los casos y escenas del libro son arquetipos editoriales y lectores simulados.
+            No representan pacientes reales ni deben usarse como guia diagnostica individual.
+            Si hay riesgo, crisis, autolesion, ideacion suicida o perdida de control, la
+            prioridad es pedir ayuda profesional o servicios de emergencia locales.
+          </div>
+        </section>
+
+        <section class="section" id="indice">
+          <p class="kicker">Indice navegable</p>
+          <h2>Indice</h2>
           <p>
-            No tienes que leerlo como manual. Puedes entrar por la pregunta que mas te duela.
-            Cada capitulo trae una idea central, una escena espejo, un mecanismo, una palanca
+            Puedes leer el libro en orden o entrar por la pregunta que mas te toca.
+            Cada capitulo trae una idea central, casos espejo, un mecanismo, una palanca
             pequena y una nota tecnica plegable para quien quiera mirar debajo del capot.
           </p>
-          <table class="map-table" aria-label="Mapa de capitulos">
+          <table class="map-table" aria-label="Indice de capitulos">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Pregunta</th>
+                <th>Capitulo</th>
                 <th>Idea en una frase</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td>1</td><td>Diagnostico</td><td>Una etiqueta puede ayudar, pero no dibuja toda la casa.</td></tr>
-              <tr><td>2</td><td>Demandas</td><td>La cultura no solo exige; tambien instala metas dentro de ti.</td></tr>
-              <tr><td>3</td><td>Competencias</td><td>Tu mente no falla como una sola pieza; se saturan sistemas.</td></tr>
-              <tr><td>4</td><td>Historia</td><td>La misma bolsa pesa distinto si ya venias cargando otra mochila.</td></tr>
-              <tr><td>5</td><td>Bucles</td><td>Un sintoma puede ser la primera ficha, no toda la historia.</td></tr>
-              <tr><td>6</td><td>Metacontrol</td><td>Darse cuenta prende la luz; metacontrol te permite moverte.</td></tr>
-              <tr><td>7</td><td>Cambio</td><td>Entrenar no es culparte; es crear condiciones para responder mejor.</td></tr>
-              <tr><td>8</td><td>Terapia</td><td>La terapia prepara; la vida consolida.</td></tr>
-              <tr><td>9</td><td>Medicacion</td><td>Puede bajar ruido y devolver margen; no vive por ti.</td></tr>
-              <tr><td>10</td><td>Condiciones</td><td>Sueno, cuerpo, ambiente y red no son consejos sueltos.</td></tr>
-              <tr><td>11</td><td>Ayuda urgente</td><td>Si hay humo, primero seguridad; despues mapa.</td></tr>
-              <tr><td>12</td><td>Mapa final</td><td>La salud mental es una relacion viva que puedes aprender a mover.</td></tr>
+              <tr><td>1</td><td><a href="#capitulo-01">&iquest;Es normal sentir que no encajo en mi diagnostico?</a></td><td>Una etiqueta puede ayudar, pero no dibuja toda la casa.</td></tr>
+              <tr><td>2</td><td><a href="#capitulo-02">&iquest;Por que el mundo me pide ser alguien todo el tiempo?</a></td><td>La cultura no solo exige; tambien instala metas dentro de ti.</td></tr>
+              <tr><td>3</td><td><a href="#capitulo-03">&iquest;Que habilidades usa mi mente para vivir el dia?</a></td><td>Tu mente no falla como una sola pieza; se saturan sistemas.</td></tr>
+              <tr><td>4</td><td><a href="#capitulo-04">&iquest;Por que a mi me pesa mas que a otros?</a></td><td>La misma bolsa pesa distinto si ya venias cargando otra mochila.</td></tr>
+              <tr><td>5</td><td><a href="#capitulo-05">&iquest;Por que un problema pequeno se vuelve un bucle?</a></td><td>Un sintoma puede ser la primera ficha, no toda la historia.</td></tr>
+              <tr><td>6</td><td><a href="#capitulo-06">&iquest;Por que a veces si puedo, me quedo en lo mismo?</a></td><td>Poder no basta si la puerta no abre.</td></tr>
+              <tr><td>7</td><td><a href="#capitulo-07">&iquest;Como puedo entrenar una habilidad sin culparme?</a></td><td>Entrenar no es culparte; es crear condiciones para responder mejor.</td></tr>
+              <tr><td>8</td><td><a href="#capitulo-08">&iquest;Para que sirve ir a terapia?</a></td><td>La terapia prepara; la vida consolida.</td></tr>
+              <tr><td>9</td><td><a href="#capitulo-09">&iquest;Cuando ayudan los medicamentos?</a></td><td>Puede bajar ruido y devolver margen; no vive por ti.</td></tr>
+              <tr><td>10</td><td><a href="#capitulo-10">&iquest;Que otras cosas tambien cambian mi mente?</a></td><td>Sueno, cuerpo, ambiente y red no son consejos sueltos.</td></tr>
+              <tr><td>11</td><td><a href="#capitulo-11">&iquest;Como se cuando necesito pedir ayuda ya?</a></td><td>Si hay humo, primero seguridad; despues mapa.</td></tr>
+              <tr><td>12</td><td><a href="#capitulo-12">&iquest;Como uso este mapa en mi vida real?</a></td><td>La salud mental es una relacion viva que puedes aprender a mover.</td></tr>
             </tbody>
           </table>
         </section>
@@ -2190,12 +2417,6 @@
             </div>
           </details>
         </article>
-                <li>WHO suicide topic.</li>
-              </ul>
-              <div class="tag-row"><span class="tag">NEED CLINICAL REVIEW</span><span class="tag">seguridad</span><span class="tag">crisis</span></div>
-            </div>
-          </details>
-        </article>
 
         <article class="chapter" id="capitulo-12" data-search="mapa vida real relacion mundo historia competencias metacontrol palanca cierre ficha taller">
           <div class="chapter-header">
@@ -2362,7 +2583,8 @@
     const expandAll = document.getElementById('expandAll');
     const printBook = document.getElementById('printBook');
     const pagers = Array.from(document.querySelectorAll('[data-pager]'));
-    const viewIds = new Set(['portada', 'mapa', ...chapters.map((chapter) => chapter.id)]);
+    const frontPages = Array.from(document.querySelectorAll('.hero, .section'));
+    const viewIds = new Set([...frontPages.map((page) => page.id), ...chapters.map((chapter) => chapter.id)]);
 
     body.classList.add('single-view');
 
@@ -2391,10 +2613,10 @@
     function updatePagers(current) {
       const index = chapters.findIndex((chapter) => chapter.id === current);
       if (index < 0) return;
-      const previousHref = index === 0 ? '#portada' : `#${chapters[index - 1].id}`;
-      const previousLabel = index === 0 ? 'Portada y mapa' : chapterLabel(chapters[index - 1]);
-      const nextHref = index === chapters.length - 1 ? '#portada' : `#${chapters[index + 1].id}`;
-      const nextLabel = index === chapters.length - 1 ? 'Volver al mapa' : chapterLabel(chapters[index + 1]);
+      const previousHref = index === 0 ? '#indice' : `#${chapters[index - 1].id}`;
+      const previousLabel = index === 0 ? 'Indice' : chapterLabel(chapters[index - 1]);
+      const nextHref = index === chapters.length - 1 ? '#indice' : `#${chapters[index + 1].id}`;
+      const nextLabel = index === chapters.length - 1 ? 'Volver al indice' : chapterLabel(chapters[index + 1]);
       pagers.forEach((pager) => {
         const previous = pager.querySelector('.pager-prev');
         const next = pager.querySelector('.pager-next');
@@ -2407,16 +2629,18 @@
 
     function showView(options = {}) {
       const current = getViewId();
-      const isIntro = current === 'portada' || current === 'mapa';
-      body.dataset.view = isIntro ? 'intro' : current;
+      const isChapter = current.startsWith('capitulo-');
+      body.dataset.view = current;
+      frontPages.forEach((page) => {
+        page.classList.toggle('active-view', page.id === current);
+      });
       chapters.forEach((chapter) => {
         chapter.classList.toggle('active-view', chapter.id === current);
       });
-      if (!isIntro) updatePagers(current);
+      if (isChapter) updatePagers(current);
       navLinks.forEach((link) => {
         const href = link.getAttribute('href');
-        const active = isIntro ? href === '#portada' : href === `#${current}`;
-        link.classList.toggle('active', active);
+        link.classList.toggle('active', href === `#${current}`);
       });
       if (options.scrollTop !== false) window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       updateProgress();
